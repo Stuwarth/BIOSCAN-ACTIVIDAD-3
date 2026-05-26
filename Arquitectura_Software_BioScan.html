@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arquitectura de Software - BioScan</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', Arial, sans-serif; line-height: 1.8; color: #1a1a2e; background: #fff; padding: 40px 60px; max-width: 900px; margin: 0 auto; }
+        h1 { font-size: 26px; font-weight: 800; color: #0078D4; margin: 40px 0 15px 0; padding-bottom: 8px; border-bottom: 3px solid #0078D4; }
+        h2 { font-size: 20px; font-weight: 700; color: #2e7d32; margin: 30px 0 12px 0; }
+        h3 { font-size: 17px; font-weight: 600; color: #1a1a2e; margin: 20px 0 8px 0; }
+        p { margin-bottom: 12px; text-align: justify; }
+        ul { margin: 10px 0 15px 25px; }
+        li { margin-bottom: 6px; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0 25px 0; font-size: 14px; }
+        th { background: #f0f2f5; color: #1a1a2e; padding: 12px 15px; text-align: left; font-weight: 700; border: 1px solid #ddd; }
+        td { padding: 12px 15px; border: 1px solid #ddd; vertical-align: top; }
+        .box { padding: 18px 22px; margin: 20px 0; border-radius: 8px; }
+        .box-blue { background: #e3f2fd; border-left: 5px solid #0078D4; }
+        .box-green { background: #e8f5e9; border-left: 5px solid #2e7d32; }
+        .cover { text-align: center; border: 3px solid #0078D4; border-radius: 12px; padding: 50px 40px; margin-bottom: 40px; background: linear-gradient(135deg, #e3f2fd 0%, #fff 50%, #e8f5e9 100%); }
+        .cover h1 { border: none; font-size: 32px; margin: 10px 0; color: #1a1a2e; }
+        @media print { body { padding: 20px 40px; } }
+    </style>
+</head>
+<body>
+
+    <div class="cover">
+        <div style="font-size: 45px;">🏗️💻</div>
+        <h1>Tipos de Arquitectura de Software</h1>
+        <p style="font-size: 18px; color: #555;">Investigación y Aplicación al Proyecto "BioScan Cochabamba"</p>
+    </div>
+
+    <h1>1. ¿Qué es la Arquitectura de Software?</h1>
+    <p>La <strong>Arquitectura de Software</strong> es el diseño de más alto nivel de un sistema informático. Es como el "plano de una casa", pero para un programa. Define cómo se organizan los componentes del software, cómo se comunican entre sí y las decisiones fundamentales sobre las tecnologías que se usarán para cumplir con los requisitos del proyecto (rendimiento, seguridad, escalabilidad, etc.).</p>
+
+    <h1>2. Explicación de los Tipos de Arquitectura</h1>
+
+    <h3>A. Arquitectura Monolítica</h3>
+    <p>Todo el sistema (interfaz de usuario, lógica de negocio y acceso a datos) se desarrolla, empaqueta y despliega como una <strong>única aplicación indivisible</strong>.</p>
+    <table>
+        <tr>
+            <th style="width: 50%;">✅ Ventajas</th>
+            <th style="width: 50%;">❌ Desventajas</th>
+        </tr>
+        <tr>
+            <td>- Fácil de desarrollar, probar y desplegar al inicio.<br>- Ideal para equipos pequeños o proyectos sencillos.</td>
+            <td>- Difícil de escalar y mantener cuando el código crece mucho.<br>- Si una parte falla, se cae todo el sistema.</td>
+        </tr>
+    </table>
+    <p><strong>Ejemplo:</strong> Un blog básico en WordPress o un sistema de inventario sencillo de una pequeña farmacia donde todo corre en un solo archivo ejecutable.</p>
+
+    <h3>B. Arquitectura en Capas (N-Tier)</h3>
+    <p>Divide el sistema en niveles horizontales (generalmente: Presentación, Lógica de Negocio y Datos). Cada capa solo se comunica con la capa inmediatamente inferior.</p>
+    <table>
+        <tr>
+            <th style="width: 50%;">✅ Ventajas</th>
+            <th style="width: 50%;">❌ Desventajas</th>
+        </tr>
+        <tr>
+            <td>- Muy ordenada y estandarizada.<br>- Separación de responsabilidades: los cambios en una capa (ej. diseño visual) no afectan a las demás (ej. base de datos).</td>
+            <td>- Puede generar código innecesario o redundante si la aplicación es muy simple (la información debe atravesar todas las capas obligatoriamente).</td>
+        </tr>
+    </table>
+    <p><strong>Ejemplo:</strong> La mayoría de aplicaciones empresariales tradicionales en lenguajes como Java (Spring) o Node.js (NestJS), donde hay controladores web, servicios de negocio y repositorios de base de datos.</p>
+
+    <h3>C. Arquitectura Cliente-Servidor</h3>
+    <p>Separa claramente la interfaz del usuario (Cliente) del procesamiento y almacenamiento de datos (Servidor). El Cliente hace peticiones y el Servidor responde.</p>
+    <table>
+        <tr>
+            <th style="width: 50%;">✅ Ventajas</th>
+            <th style="width: 50%;">❌ Desventajas</th>
+        </tr>
+        <tr>
+            <td>- Centralización de datos y seguridad (el servidor protege la información crucial).<br>- Permite tener múltiples clientes (Web, Móvil, Escritorio) conectados al mismo servidor.</td>
+            <td>- Si el servidor se cae, ningún cliente puede funcionar.<br>- Requiere una conexión a red estable para funcionar correctamente.</td>
+        </tr>
+    </table>
+    <p><strong>Ejemplo:</strong> Plataformas como Spotify o Netflix. Tú tienes la app en tu celular (Cliente), pero las canciones, películas y tu cuenta viven en sus centros de datos (Servidor).</p>
+
+    <h3>D. Arquitectura de Microservicios</h3>
+    <p>El sistema se divide en servicios muy pequeños e independientes que se comunican entre sí (generalmente por red). Cada servicio hace una sola cosa muy bien y tiene su propia base de datos.</p>
+    <table>
+        <tr>
+            <th style="width: 50%;">✅ Ventajas</th>
+            <th style="width: 50%;">❌ Desventajas</th>
+        </tr>
+        <tr>
+            <td>- Altamente escalable: puedes darle más potencia solo a la parte que lo necesita.<br>- Si un servicio falla (ej. sistema de comentarios), el resto de la app sigue funcionando.</td>
+            <td>- Extremadamente compleja de configurar, monitorear y mantener.<br>- Sobrecarga en la red por mucha comunicación entre microservicios.</td>
+        </tr>
+    </table>
+    <p><strong>Ejemplo:</strong> Aplicaciones gigantes como Uber (un microservicio calcula la ruta, otro cobra la tarjeta, otro asigna el conductor) o Amazon.</p>
+
+    <h1>3. ¿Qué Arquitectura aplicamos en BioScan Cochabamba?</h1>
+
+    <div class="box box-green">
+        <p>Para nuestro proyecto <strong>BioScan Cochabamba</strong>, utilizamos una combinación de <strong>Arquitectura Cliente-Servidor</strong> a nivel general, y <strong>Arquitectura en Capas</strong> a nivel del backend.</p>
+    </div>
+
+    <h2>1️⃣ Arquitectura Cliente-Servidor (A nivel macro)</h2>
+    <p>Nuestro proyecto está dividido físicamente y lógicamente en dos partes que se comunican a través de internet (API REST):</p>
+    <ul>
+        <li><strong>El Cliente (Frontend Web):</strong> Desarrollado en HTML, CSS y JS (o frameworks modernos). Se encarga de mostrar el mapa interactivo (Leaflet), capturar las fotos desde el navegador del usuario y presentar los resultados.</li>
+        <li><strong>El Servidor (Backend en NestJS):</strong> El "cerebro". Recibe la foto, procesa la petición y se conecta a las Inteligencias Artificiales (Plant.id, Groq, iNaturalist).</li>
+    </ul>
+    
+    <h3>¿Por qué elegimos Cliente-Servidor?</h3>
+    <ul>
+        <li><strong>Seguridad Crítica:</strong> Para usar la IA necesitamos "API Keys" (claves secretas). Si pusiéramos todo junto en el frontend (Monolítico simple), cualquier usuario podría robar nuestras claves. Al tener un Servidor, las claves están ocultas y protegidas; el usuario solo interactúa con el frontend que le pide al servidor los datos.</li>
+        <li><strong>Escalabilidad futura:</strong> Si el día de mañana la Alcaldía decide que quiere una App Nativa móvil (Android/iOS) para los guardaparques del Cerro San Pedro, solo necesitamos crear el nuevo Cliente móvil. No hay que reescribir el Servidor, porque ya está separado.</li>
+    </ul>
+
+    <h2>2️⃣ Arquitectura en Capas (Dentro del Servidor NestJS)</h2>
+    <p>Al programar el backend con el framework <strong>NestJS</strong>, estamos aplicando inherentemente una arquitectura de capas estructurada:</p>
+    <ul>
+        <li><strong>Capa de Presentación / Controladores (Controllers):</strong> Son las rutas de nuestra API (ej. <code>/api/identificar</code>). Solo reciben la foto, validan que el archivo sea correcto y se lo pasan a la siguiente capa.</li>
+        <li><strong>Capa de Lógica de Negocio (Services):</strong> Aquí ocurre la magia. El servicio toma la foto, la procesa, la envía a la IA de reconocimiento visual, extrae la probabilidad y formula la respuesta final estructurada.</li>
+        <li><strong>Capa de Datos (Repositories/Data):</strong> Se encarga de leer el registro histórico de especies (en un archivo JSON o base de datos) del Cerro San Pedro.</li>
+    </ul>
+
+    <h3>¿Por qué elegimos Arquitectura en Capas internamente?</h3>
+    <ul>
+        <li><strong>Trabajo en equipo limpio:</strong> Al estar el código tan ordenado, diferentes personas del equipo pueden trabajar en la lógica del Chatbot y en la de Identificación Visual al mismo tiempo sin causar conflictos en el código.</li>
+        <li><strong>Mantenibilidad:</strong> Si mañana decidimos cambiar la IA de "Plant.id" por "Azure Custom Vision", solo modificamos la Capa de Lógica. El Controlador (la ruta web) no sufre ningún cambio, lo que evita que el sistema se rompa inesperadamente.</li>
+    </ul>
+
+    <div class="box box-blue">
+        <p><strong>Resumen para el informe:</strong> Descartamos el modelo Monolítico por falta de seguridad para nuestras APIs de IA, y descartamos Microservicios porque aportaría una complejidad innecesaria a un MVP (Producto Mínimo Viable). La combinación de <strong>Cliente-Servidor + Arquitectura en Capas (con NestJS)</strong> nos brinda el equilibrio perfecto entre seguridad, rapidez de desarrollo, orden técnico y profesionalismo para la hackathon y para un entorno real de negocio.</p>
+    </div>
+
+</body>
+</html>

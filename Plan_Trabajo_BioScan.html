@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan de Trabajo - BioScan Cochabamba</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Inter',Arial,sans-serif; line-height:1.8; color:#1a1a2e; background:#fff; padding:40px 60px; max-width:950px; margin:0 auto; }
+  h1 { font-size:24px; font-weight:800; color:#2e7d32; margin:40px 0 12px; padding-bottom:8px; border-bottom:3px solid #2e7d32; }
+  h2 { font-size:18px; font-weight:700; color:#1a1a2e; margin:28px 0 10px; border-left:4px solid #2e7d32; padding-left:12px; }
+  h3 { font-size:15px; font-weight:600; color:#f57c00; margin:16px 0 6px; }
+  p { margin-bottom:10px; text-align:justify; }
+  ul,ol { margin:8px 0 12px 24px; }
+  li { margin-bottom:5px; }
+  table { width:100%; border-collapse:collapse; margin:12px 0 20px; font-size:13px; }
+  th { background:#2e7d32; color:#fff; padding:10px 12px; text-align:left; font-weight:600; }
+  td { padding:10px 12px; border-bottom:1px solid #e0e0e0; vertical-align:top; }
+  tr:nth-child(even) { background:#f9fafb; }
+  .box { padding:16px 20px; margin:16px 0; border-radius:8px; }
+  .green { background:#e8f5e9; border-left:5px solid #2e7d32; }
+  .blue  { background:#e3f2fd; border-left:5px solid #0078D4; }
+  .orange{ background:#fff3e0; border-left:5px solid #f57c00; }
+  .red   { background:#ffebee; border-left:5px solid #c62828; }
+  .cover { text-align:center; border:3px solid #2e7d32; border-radius:12px; padding:45px 35px; margin-bottom:35px; background:linear-gradient(135deg,#e8f5e9 0%,#fff 50%,#e3f2fd 100%); }
+  .cover h1 { border:none; font-size:28px; color:#1a1a2e; }
+  .badge { display:inline-block; padding:2px 10px; border-radius:12px; font-size:12px; font-weight:700; }
+  .badge-green { background:#c8e6c9; color:#1b5e20; }
+  .badge-red   { background:#ffcdd2; color:#b71c1c; }
+  .badge-blue  { background:#bbdefb; color:#0d47a1; }
+  @media print { body { padding:20px 35px; } }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div style="font-size:42px">🌿📋🔬</div>
+  <h1>Plan de Trabajo — BioScan Cochabamba</h1>
+  <p style="font-size:16px;color:#555;margin-top:8px">Planificación, Requerimientos y Costos · Mayo 2026</p>
+  <p style="font-size:13px;color:#888">Basado en reunión con Oscar Coordinador + Investigación de APIs</p>
+</div>
+
+<!-- ================================================ -->
+<h1>1. ¿Qué hace nuestra plataforma? (Informe de la Web)</h1>
+
+<h2>Descripción General</h2>
+<p><strong>BioScan Cochabamba</strong> es una plataforma web de <em>ciencia ciudadana potenciada por Inteligencia Artificial</em> cuyo propósito es monitorear, registrar y visualizar la biodiversidad del corredor biológico del <strong>Cerro San Pedro</strong> y su zona de influencia en Cochabamba, Bolivia.</p>
+
+<h2>Problemática que abordamos</h2>
+<p>El Cerro San Pedro alberga más de 700 especies documentadas (104 aves, 527 plantas, 41 mariposas, 10 murciélagos), incluyendo especies endémicas en peligro como la <em>Monterita de Cochabamba (Poospiza garleppi)</em>. Sin embargo:</p>
+<ul>
+  <li>El monitoreo de biodiversidad es <strong>manual, esporádico y costoso</strong>.</li>
+  <li>No existe una plataforma centralizada y accesible para registrar observaciones ciudadanas en tiempo real.</li>
+  <li>La falta de datos digitales dificulta la toma de decisiones para la conservación y la defensa legal del corredor biológico ante proyectos que lo amenazan.</li>
+</ul>
+
+<h2>Objetivos de la plataforma</h2>
+<ol>
+  <li>Permitir a cualquier ciudadano identificar especies (plantas y animales) mediante IA a partir de una fotografía.</li>
+  <li>Geolocalizar y registrar cada observación en un mapa interactivo en tiempo real.</li>
+  <li>Construir un dataset actualizado y de dominio público de la biodiversidad local.</li>
+  <li>Educar a la comunidad a través de un Eco-Asistente con IA sobre las especies del Cerro San Pedro.</li>
+  <li>Proporcionar datos científicamente válidos a instituciones (UMSS, Alcaldía, ONGs) para políticas de conservación.</li>
+</ol>
+
+<h2>Beneficiarios directos</h2>
+<table>
+  <tr><th>Beneficiario</th><th>¿Cómo les ayuda BioScan?</th></tr>
+  <tr><td>🏛️ Alcaldía / Gobernación de Cochabamba</td><td>Datos actualizados para políticas públicas ambientales y planificación urbana.</td></tr>
+  <tr><td>🎓 UMSS (Facultades de Biología, Agronomía)</td><td>Dataset abierto para investigación académica y tesis.</td></tr>
+  <tr><td>🌍 ONGs (WWF, FUNDESNAP, Natura Bolivia)</td><td>Evidencia científica para proyectos de conservación y financiamiento.</td></tr>
+  <tr><td>🏗️ Empresas de construcción</td><td>Herramienta para Estudios de Impacto Ambiental (EIA) más rápidos y económicos.</td></tr>
+  <tr><td>👥 Ciudadanía en general</td><td>Educación ambiental, turismo ecológico, conciencia de biodiversidad local.</td></tr>
+</table>
+
+<!-- ================================================ -->
+<h1>2. Dataset — Conjunto de Datos</h1>
+
+<div class="box green">
+  <strong>Respuesta al coordinador:</strong> Sí, BioScan accede a conjuntos de datos existentes y también genera su propio dataset de observaciones locales.
+</div>
+
+<h2>Datasets que usamos / usaremos</h2>
+
+<h3>A. iNaturalist (vía GBIF) — Dataset Principal</h3>
+<ul>
+  <li><strong>¿Qué es?</strong> La mayor base de datos de ciencia ciudadana del mundo. +200 millones de observaciones de 3.3 millones de observadores.</li>
+  <li><strong>Cobertura Bolivia/Cochabamba:</strong> Tiene observaciones georreferenciadas filtradas por departamento y radio de ubicación (lat/lng + radio en km).</li>
+  <li><strong>Calidad científica:</strong> Las observaciones "Research Grade" tienen 100% de precisión validada por la comunidad.</li>
+  <li><strong>Actualización:</strong> Se exporta a GBIF semanalmente (~17 GB de datos actualizados).</li>
+  <li><strong>Costo:</strong> <span class="badge badge-green">GRATUITO</span> — Acceso abierto bajo licencias Creative Commons.</li>
+</ul>
+
+<h3>B. Dataset Propio (generado por BioScan)</h3>
+<ul>
+  <li>Cada observación que sube un usuario en BioScan se almacena con: especie identificada, coordenadas GPS, fecha, foto y confianza de la IA.</li>
+  <li>Con el tiempo, este dataset se convierte en el primer registro digital específico del Cerro San Pedro.</li>
+  <li>Se puede publicar como datos abiertos para la comunidad científica (novedad científica).</li>
+</ul>
+
+<h3>C. ¿Tiene cobertura de especies bolivianas? (Limitación identificada)</h3>
+<div class="box orange">
+  <strong>Plant.id:</strong> Cubre 35.756 especies vegetales. El modelo fue evaluado con datos de América del Norte y Europa principalmente. Para Bolivia/Cochabamba la precisión puede ser menor para especies nativas andinas. <strong>Recomendación:</strong> Validar con expertos botánicos locales (UMSS) las identificaciones del sistema.<br><br>
+  <strong>iNaturalist:</strong> Sí tiene cobertura de Bolivia, aunque la densidad de observaciones es menor que en Europa/Norteamérica. Para el Cerro San Pedro existen observaciones registradas que podemos importar.
+</div>
+
+<h2>¿Quiénes están a cargo de la entrada de datos?</h2>
+<table>
+  <tr><th>Rol</th><th>Responsable</th><th>Acción</th></tr>
+  <tr><td>Ciudadanos / Usuarios</td><td>Público general</td><td>Suben fotos desde la web → la IA identifica automáticamente</td></tr>
+  <tr><td>Administrador BioScan</td><td>Equipo del proyecto</td><td>Valida observaciones dudosas, mantiene el dataset limpio</td></tr>
+  <tr><td>Expertos validadores</td><td>UMSS / Biólogos</td><td>Validan identificaciones para elevarlas a "Research Grade"</td></tr>
+  <tr><td>iNaturalist/GBIF (automático)</td><td>Sistema</td><td>Importa datos externos semanalmente para enriquecer el catálogo</td></tr>
+</table>
+
+<!-- ================================================ -->
+<h1>3. Tecnologías y Marco Técnico</h1>
+
+<h2>Stack Tecnológico actual</h2>
+<table>
+  <tr><th>Capa</th><th>Tecnología</th><th>Versión</th><th>Rol</th></tr>
+  <tr><td>Frontend</td><td>React + Vite</td><td>React 19, Vite 6</td><td>Interfaz de usuario, mapa interactivo</td></tr>
+  <tr><td>Mapas</td><td>Leaflet.js + React-Leaflet</td><td>1.9.4 / 5.0</td><td>Visualización geográfica de observaciones</td></tr>
+  <tr><td>Backend</td><td>NestJS</td><td>11.x (Node.js 22)</td><td>API REST segura, lógica de negocio</td></tr>
+  <tr><td>IA Identificación</td><td>Plant.id (Kindwise)</td><td>API v3 (2024)</td><td>Identificación de plantas por foto</td></tr>
+  <tr><td>IA Chatbot</td><td>Groq API (Llama 3)</td><td>llama-3.3-70b</td><td>Eco-Asistente de biodiversidad</td></tr>
+  <tr><td>Datos de Biodiversidad</td><td>iNaturalist API + GBIF</td><td>v1 / v2</td><td>Consulta de especies por ubicación</td></tr>
+  <tr><td>Base de Datos (propuesta)</td><td>Supabase (PostgreSQL)</td><td>—</td><td>Almacenamiento de observaciones + imágenes</td></tr>
+</table>
+
+<h2>Limitaciones identificadas del sistema</h2>
+<ul>
+  <li><strong>Cobertura geográfica:</strong> Plant.id fue entrenado principalmente con datos de Europa y Norteamérica. Puede tener menor precisión para flora andina endémica de Bolivia.</li>
+  <li><strong>Solo plantas:</strong> Plant.id identifica plantas; para fauna (aves, mamíferos, insectos) se necesita iNaturalist o una API adicional.</li>
+  <li><strong>Rate limit de iNaturalist:</strong> Máximo 100 solicitudes/minuto; se debe implementar caché para no saturar la API.</li>
+  <li><strong>Sin validación experta automática:</strong> El sistema actual no tiene una etapa de verificación por biólogos integrada. Sería necesario para publicaciones científicas.</li>
+  <li><strong>Dependencia de conectividad:</strong> Requiere internet para funcionar; no hay modo offline para zonas rurales.</li>
+</ul>
+
+<!-- ================================================ -->
+<h1>4. Análisis de Costos y Sostenibilidad</h1>
+
+<h2>APIs — Costos detallados</h2>
+<table>
+  <tr><th>Servicio</th><th>Plan Gratuito</th><th>Costo Mensual (Operativo)</th><th>Costo Anual</th></tr>
+  <tr><td>🌿 <strong>Plant.id (Kindwise)</strong></td><td>100 créditos gratis al registrarse</td><td>~100 € (Nivel B: 10.000 créditos/trimestre)</td><td>~400 € ≈ Bs. 3.200</td></tr>
+  <tr><td>🦋 <strong>iNaturalist API</strong></td><td>Totalmente gratuita</td><td><strong>$0</strong></td><td><strong>$0</strong></td></tr>
+  <tr><td>🤖 <strong>Groq API (Chatbot)</strong></td><td>Nivel gratuito generoso (desarrollo)</td><td>~$20-50 (según uso)</td><td>~$240-600</td></tr>
+  <tr><td>🗄️ <strong>Supabase (BD + Storage)</strong></td><td>Gratis hasta 500 MB BD / 1 GB storage</td><td>$25 (Pro Plan)</td><td>$300</td></tr>
+</table>
+
+<div class="box red">
+  <strong>💰 Inversión mínima para MVP operativo (primeros 3 meses):</strong><br>
+  Plant.id Nivel B: 300 € | Groq: ~$60 | Supabase Pro: $75 | Hosting (Render): $21<br>
+  <strong>Total estimado: ~$500 USD para los primeros 3 meses de operación real.</strong>
+</div>
+
+<h2>Base de Datos — Comparativa (responde pregunta de Oscar)</h2>
+<table>
+  <tr><th>Opción</th><th>Ventaja</th><th>Desventaja</th><th>Precio</th></tr>
+  <tr><td><strong>Supabase</strong> ⭐ Recomendada</td><td>PostgreSQL, storage de imágenes nativo, auth integrado, Open Source</td><td>En producción puede llenarse rápido con imágenes</td><td>Gratis / $25/mes Pro</td></tr>
+  <tr><td>PlanetScale (MySQL)</td><td>Escalable, buena performance</td><td>Sin soporte nativo para imágenes grandes</td><td>Gratis / $39/mes</td></tr>
+  <tr><td>Firebase</td><td>Fácil integración, realtime</td><td>Caro a escala, vendor lock-in de Google</td><td>Gratis / variable</td></tr>
+</table>
+
+<h2>IA para el chatbot — ¿Cuál conviene para financiamiento?</h2>
+<table>
+  <tr><th>IA</th><th>Ventaja</th><th>Costo (3 personas)</th><th>¿Recomendada para financiadores?</th></tr>
+  <tr><td>Groq (Llama 3) ⭐</td><td>Más rápido del mundo, gratis en dev</td><td>~$20-50/mes en producción</td><td>Sí — bajo costo, open source</td></tr>
+  <tr><td>Claude API (Anthropic)</td><td>Mejor razonamiento, respuestas largas</td><td>~$50-150/mes según tokens</td><td>Sí — para publicaciones científicas (más preciso)</td></tr>
+  <tr><td>OpenAI GPT-4</td><td>El más conocido</td><td>~$80-200/mes</td><td>Sí — pero más caro</td></tr>
+  <tr><td>Azure OpenAI</td><td>Créditos gratuitos para estudiantes</td><td>$0 con Azure for Students</td><td>⭐ Sí — ideal si tienen acceso UMSS</td></tr>
+</table>
+
+<!-- ================================================ -->
+<h1>5. Respaldo Científico de las APIs</h1>
+
+<h2>iNaturalist — Publicaciones de referencia</h2>
+<ul>
+  <li>BioScience, Oxford Academic (2024): "iNaturalist accelerates biodiversity research" — +5.000 artículos científicos basados en sus datos.</li>
+  <li>Ecology and Evolution, John Wiley (2024, PMC11461752): Confiabilidad de datos para monitoreo de biodiversidad.</li>
+  <li>Citizen Science: Theory and Practice (2019): 100% de precisión en observaciones "Research Grade".</li>
+</ul>
+
+<h2>Plant.id (Kindwise) — Publicaciones de referencia</h2>
+<ul>
+  <li>Velasquez-Camacho et al. (2024), Int. Journal of Applied Earth Observation: Mayor precisión en identificación de árboles urbanos.</li>
+  <li>Merontausta et al. (2025), Ecological Informatics: Mayor precisión en detección de plantas invasoras.</li>
+  <li>Kindwise Blog (2024): Actualización del modelo a 35.756 especies, precisión top-1 del 76.7%+ y cobertura del 92.4%.</li>
+</ul>
+
+<!-- ================================================ -->
+<h1>6. Potencial Publicación Científica</h1>
+
+<div class="box blue">
+  <strong>La novedad científica de BioScan:</strong> No existe una plataforma de ciencia ciudadana con IA orientada específicamente a los corredores biológicos urbanos de Cochabamba. BioScan generaría el primer dataset digital, georreferenciado y actualizable de la biodiversidad del Cerro San Pedro.
+</div>
+
+<h2>Estructura propuesta para el artículo científico</h2>
+<ol>
+  <li><strong>Resumen (Abstract):</strong> BioScan como herramienta de monitoreo de biodiversidad con IA en Cochabamba.</li>
+  <li><strong>Introducción:</strong> Problemática de la pérdida de biodiversidad urbana en Cochabamba, falta de datos digitales.</li>
+  <li><strong>Revisión de Literatura:</strong> Ciencia ciudadana (iNaturalist), Computer Vision en botánica (Plant.id), corredores biológicos urbanos en Latinoamérica.</li>
+  <li><strong>Metodología:</strong> Arquitectura del sistema (NestJS + React), integración de APIs, flujo de validación de datos, construcción del dataset.</li>
+  <li><strong>Resultados:</strong> N° de observaciones registradas, especies identificadas, precisión del sistema, cobertura geográfica.</li>
+  <li><strong>Conclusiones:</strong> Utilidad para la comunidad científica, limitaciones, trabajo futuro.</li>
+</ol>
+
+<h2>Revistas objetivo (indexadas)</h2>
+<ul>
+  <li>Ecological Informatics (Elsevier) — Área: informática aplicada a ecología ✅</li>
+  <li>Biodiversity Data Journal (Pensoft) — Especializada en datasets de biodiversidad ✅</li>
+  <li>Citizen Science: Theory and Practice — Ciencia ciudadana ✅</li>
+</ul>
+
+<!-- ================================================ -->
+<h1>7. Plan de Trabajo y Cronograma</h1>
+
+<table>
+  <tr><th>Fase</th><th>Actividad</th><th>Responsable</th><th>Tiempo estimado</th></tr>
+  <tr><td rowspan="3"><strong>Fase 1</strong><br>Documentación</td><td>Informe técnico de la plataforma (este documento)</td><td>Todo el equipo</td><td>1 semana</td></tr>
+  <tr><td>Revisión de literatura (biodiversidad Cochabamba)</td><td>Investigador/Oscar</td><td>2 semanas</td></tr>
+  <tr><td>Definir problemática y beneficiarios formalmente</td><td>Equipo + Coordinador</td><td>1 semana</td></tr>
+  <tr><td rowspan="3"><strong>Fase 2</strong><br>Dataset</td><td>Descarga y filtrado de datos iNaturalist para Cochabamba (vía GBIF)</td><td>Backend Dev</td><td>1 semana</td></tr>
+  <tr><td>Importar dataset a Supabase con estructura definida</td><td>Backend Dev</td><td>1 semana</td></tr>
+  <tr><td>Validación de datos con experto botánico UMSS</td><td>Coordinador + Biólogo</td><td>2 semanas</td></tr>
+  <tr><td rowspan="3"><strong>Fase 3</strong><br>Desarrollo</td><td>Integración completa Plant.id con validación geográfica</td><td>Backend Dev</td><td>2 semanas</td></tr>
+  <tr><td>Módulo de chatbot con datos del dataset local (RAG)</td><td>Backend Dev</td><td>2 semanas</td></tr>
+  <tr><td>Ajustes de UI/UX y mapa de calor de biodiversidad</td><td>Frontend Dev</td><td>2 semanas</td></tr>
+  <tr><td rowspan="2"><strong>Fase 4</strong><br>Validación</td><td>Pruebas con usuarios reales (beta cerrada)</td><td>Todo el equipo</td><td>2 semanas</td></tr>
+  <tr><td>Validación de expertos (biólogos, UMSS)</td><td>Coordinador</td><td>2 semanas</td></tr>
+  <tr><td><strong>Fase 5</strong><br>Publicación</td><td>Redacción del artículo científico</td><td>Todo el equipo</td><td>4 semanas</td></tr>
+</table>
+
+<div class="box green">
+  <strong>⏱️ Tiempo total estimado para sistema funcional y validado:</strong> 3 a 4 meses (con dedicación parcial del equipo). Para publicación científica: 5 a 6 meses.
+</div>
+
+<!-- ================================================ -->
+<h1>8. Lo que BioScan TIENE y lo que NO TIENE (Limitaciones)</h1>
+
+<table>
+  <tr><th>✅ LO QUE TIENE</th><th>❌ LO QUE NO TIENE (aún)</th></tr>
+  <tr><td>Identificación de plantas por foto con IA</td><td>Identificación de animales (aves, insectos, mamíferos)</td></tr>
+  <tr><td>Mapa interactivo de observaciones georreferenciadas</td><td>Validación automática por expertos integrada al flujo</td></tr>
+  <tr><td>Eco-Asistente con chatbot IA</td><td>Modo offline para trabajo de campo sin internet</td></tr>
+  <tr><td>Arquitectura segura (NestJS, API Keys protegidas)</td><td>App móvil nativa (solo web por ahora)</td></tr>
+  <tr><td>Dashboard de estadísticas de biodiversidad</td><td>Base de datos en producción con hosting real</td></tr>
+  <tr><td>Integración con iNaturalist para datos regionales</td><td>Cobertura completa de flora endémica boliviana</td></tr>
+</table>
+
+<!-- ================================================ -->
+<h1>9. Requerimientos para la Reunión de Hoy</h1>
+<div class="box orange">
+  <strong>Checklist de lo que deben llevar preparado:</strong>
+  <ul style="margin-top:8px">
+    <li>☑️ Este documento como plan de trabajo</li>
+    <li>☑️ Costos de Plant.id (Nivel B: 300€/trimestre) e iNaturalist (gratis)</li>
+    <li>☑️ Propuesta de base de datos: Supabase (gratuito en dev, $25/mes en producción)</li>
+    <li>☑️ Stack técnico completo (NestJS + React + Leaflet)</li>
+    <li>☑️ Limitaciones honestas del sistema (cobertura Bolivia, solo plantas, sin offline)</li>
+    <li>☑️ Propuesta de publicación científica (Biodiversity Data Journal o Ecological Informatics)</li>
+    <li>☐ Pendiente: Definir herramienta de gestión (Office Planner o Excel según Oscar)</li>
+    <li>☐ Pendiente: Investigar alternativas de API para identificación de fauna (aves, insectos)</li>
+  </ul>
+</div>
+
+<div style="margin-top:30px;padding-top:12px;border-top:2px solid #e0e0e0;text-align:center;color:#999;font-size:12px">
+  BioScan Cochabamba — Plan de Trabajo v1.0 — Mayo 2026
+</div>
+
+</body>
+</html>
