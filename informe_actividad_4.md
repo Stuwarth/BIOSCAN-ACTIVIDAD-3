@@ -34,15 +34,19 @@ Como progresión a la estructura básica desarrollada en la fase anterior, en es
 
 **Módulo de Escaneo y Validación Activa:**
 
-![Upload interactivo](screenshots/upload.png)
+![Upload interactivo](screenshots_act4/upload_interactivo.png)
 
-**Animaciones basadas en Scroll (Nosotros):**
+**Animaciones basadas en Scroll (Nosotros) y Chatbot:**
 
-![Scrollytelling en acción](screenshots/nosotros.png)
+![Chatbot y Scroll](screenshots_act4/chatbot.png)
 
-**Mapa Integrado con Leaflet:**
+**Catálogo con Filtros Dinámicos:**
 
-![Mapa Dinámico](screenshots/mapa.png)
+![Catálogo Filtrado](screenshots_act4/catalogo_filtrado.png)
+
+**Mapa Integrado con Marcadores Interactivos (Leaflet):**
+
+![Mapa Dinámico](screenshots_act4/mapa_popup.png)
 
 ## 3. Recursos multimedia incorporados
 
