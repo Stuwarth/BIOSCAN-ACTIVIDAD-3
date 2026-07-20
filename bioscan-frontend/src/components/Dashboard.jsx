@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { Bird, TreePine, Eye, AlertTriangle, Flower2, Rabbit } from 'lucide-react'
 import { getObservaciones } from '../services/observaciones'
@@ -47,58 +47,58 @@ export default function Dashboard() {
       value: stats.total,
       sub: 'especies registradas',
       icon: TreePine,
-      color: 'bg-green-100 text-green-700',
+      color: 'bg-white/5 text-slate-300 border border-white/10',
     },
     {
       label: 'Aves',
       value: stats.aves,
       sub: 'en el catalogo',
       icon: Bird,
-      color: 'bg-blue-100 text-blue-700',
+      color: 'bg-white/5 text-slate-300 border border-white/10',
     },
     {
       label: 'Plantas',
       value: stats.plantas,
       sub: 'nativas documentadas',
       icon: Flower2,
-      color: 'bg-emerald-100 text-emerald-700',
+      color: 'bg-white/5 text-slate-300 border border-white/10',
     },
     {
       label: 'Mamiferos',
       value: stats.mamiferos,
       sub: 'incl. 3 carnivoros',
       icon: Rabbit,
-      color: 'bg-amber-100 text-amber-700',
+      color: 'bg-white/5 text-slate-300 border border-white/10',
     },
     {
       label: 'Amenazadas',
       value: stats.amenazadas,
       sub: 'en peligro o vulnerable',
       icon: AlertTriangle,
-      color: 'bg-red-100 text-red-700',
+      color: 'bg-red-500/10 text-red-500 border border-red-500/20',
     },
     {
       label: 'Mis Observaciones',
       value: stats.misObs,
       sub: 'escaneadas con BioScan',
       icon: Eye,
-      color: 'bg-purple-100 text-purple-700',
+      color: 'bg-primary/20 text-primary border border-primary/20',
     },
   ]
 
   return (
-    <section id="dashboard" className="py-16 bg-white">
+    <section id="dashboard" className="py-24 bg-[#030704]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-3">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl lg:text-5xl font-extrabold text-white mb-4 tracking-tighter">
             Dashboard de Biodiversidad
           </h2>
-          <p className="text-gray-500 max-w-xl mx-auto">
-            Estadisticas en tiempo real del catalogo BioScan — Cerro San Pedro, Cochabamba
+          <p className="text-slate-400 font-medium max-w-xl mx-auto">
+            Estadísticas en tiempo real del catálogo BioScan — Cerro San Pedro, Cochabamba
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
           {cards.map((card, i) => {
             const Icon = card.icon
             return (
@@ -106,24 +106,24 @@ export default function Dashboard() {
                 key={card.label}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
+                transition={{ delay: i * 0.1, type: "spring", stiffness: 70, damping: 20 }}
                 viewport={{ once: true }}
-                className="bg-white border border-gray-100 rounded-2xl p-5 text-center shadow-sm hover:shadow-md transition-shadow"
+                className="bg-white/5 border border-white/10 rounded-3xl p-6 text-center backdrop-blur-md shadow-[0_0_20px_rgba(255,255,255,0.02)] hover:shadow-[0_0_20px_rgba(255,255,255,0.05)] hover:bg-white/10 transition-all duration-300"
               >
-                <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl mb-3 ${card.color}`}>
-                  <Icon className="w-6 h-6" />
+                <div className={`inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-4 ${card.color}`}>
+                  <Icon className="w-7 h-7" />
                 </div>
-                <p className="text-2xl font-bold text-gray-900">{card.value}</p>
-                <p className="text-xs text-gray-500 mt-1">{card.label}</p>
-                <p className="text-[10px] text-gray-400 mt-0.5">{card.sub}</p>
+                <p className="text-3xl font-bold text-white mb-1 tracking-tight">{card.value}</p>
+                <p className="text-sm text-slate-300 font-medium">{card.label}</p>
+                <p className="text-[11px] text-slate-500 mt-1 leading-tight">{card.sub}</p>
               </motion.div>
             )
           })}
         </div>
 
         {/* Fuente */}
-        <p className="text-center text-[11px] text-gray-400 mt-6">
-          Datos del catalogo BioScan - Investigacion UMSS — Centro de Biodiversidad y Genetica (2025)
+        <p className="text-center text-xs text-slate-500 mt-12 font-mono uppercase tracking-widest">
+          Datos del catálogo BioScan - Investigación UMSS (2025)
         </p>
       </div>
     </section>

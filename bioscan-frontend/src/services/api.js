@@ -36,15 +36,42 @@ const GROQ_KEY = import.meta.env.VITE_GROQ_KEY || ''
  * @param {string} imagenBase64 - Imagen en formato base64
  * @returns {object} { nombre, nombre_cientifico, probabilidad, descripcion, tipo, estado_conservacion }
  */
+// Helper para comprimir la imagen en el cliente y evitar errores 413 (Payload Too Large)
+function comprimirImagen(base64, maxAncho = 1000) {
+  return new Promise((resolve) => {
+    const img = new Image()
+    img.onload = () => {
+      if (img.width <= maxAncho) {
+        resolve(base64)
+        return
+      }
+      const ratio = maxAncho / img.width
+      const canvas = document.createElement('canvas')
+      canvas.width = maxAncho
+      canvas.height = Math.round(img.height * ratio)
+      const ctx = canvas.getContext('2d')
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+      resolve(canvas.toDataURL('image/jpeg', 0.8))
+    }
+    img.onerror = () => resolve(base64)
+    img.src = base64
+  })
+}
+
 export async function identificarEspecie(imagenBase64) {
   try {
+    // Comprimir la imagen antes de procesarla
+    const conPrefijo = imagenBase64.startsWith('data:') ? imagenBase64 : `data:image/jpeg;base64,${imagenBase64}`
+    const comprimida = await comprimirImagen(conPrefijo)
+    const base64Procesable = comprimida.split(',')[1]
+
     if (MODE === 'backend') {
       // --- MODO BACKEND: usa endpoints reales de Tomas ---
 
       // 1) Intentar Plant.id via backend
       try {
         const { data } = await axios.post(`${API_URL}/api/plantid/identify`, {
-          image: imagenBase64,
+          image: base64Procesable,
         })
         if (data.esPlanta && data.planta) {
           return {
@@ -99,7 +126,7 @@ export async function identificarEspecie(imagenBase64) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          images: [imagenBase64],
+          images: [base64Procesable],
           similar_images: true,
         }),
       })
@@ -203,23 +230,21 @@ export async function preguntarEcoAsistente(pregunta, historial = []) {
         messages: [
           {
             role: 'system',
-            content: `Eres BioBot 🌿, el eco-asistente oficial de BioScan Cochabamba.
-Eres un experto amigable en la biodiversidad del Cerro San Pedro y los ecosistemas de Cochabamba, Bolivia.
+            content: `Eres el Asistente Técnico Ambiental de BioScan Cochabamba.
+Tu objetivo es proveer información científica precisa sobre la biodiversidad del Cerro San Pedro.
 
-Conoces estos datos reales:
-- El Cerro San Pedro alberga 700+ especies: 104 aves, 527 plantas, 41 mariposas, 10 murciélagos
-- La Monterita de Cochabamba (Poospiza garleppi) es endémica y está en PELIGRO CRÍTICO de extinción
-- Los bosques de Polylepis (quewiña) son los más amenazados del ecosistema
-- Existe un proyecto de túnel que fragmentaría los corredores biológicos del cerro
-- El Proyecto ATUQ de WWF trabaja activamente en la conservación del cerro
-- El molle (Schinus molle) y el cactus San Pedro son especies clave del ecosistema
-- BioScan fue creado por estudiantes de la UPDS Cochabamba en el Tech4Future Hack 2026
+Base de datos de conocimiento:
+- Registro taxonómico: 700+ especies (104 aves, 527 plantas, 41 mariposas, 10 murciélagos).
+- Especies críticas: Monterita de Cochabamba (Poospiza garleppi) - Peligro Crítico (Endémica).
+- Hábitats críticos: Bosques de Polylepis (quewiña).
+- Riesgos ambientales: Proyecto de infraestructura vial (túnel) que compromete la conectividad biológica.
+- Colaboradores técnicos: Proyecto ATUQ (WWF Bolivia).
+- Especies clave: Schinus molle, Echinopsis lageniformis.
 
 Reglas de respuesta:
-- Responde SIEMPRE en español
-- Sé amigable, educativo y conciso (máximo 3 frases)
-- Usa emojis ocasionalmente
-- Si no sabes algo, admítelo con humildad`,
+- Responde siempre en español formal y técnico.
+- Sé objetivo, preciso y conciso. No uses emojis.
+- Basate estrictamente en datos biológicos y ecológicos.`,
           },
           ...historial.map((m) => ({
             role: m.role,
@@ -321,7 +346,7 @@ function getDatoDemo() {
       nombre: 'Cactus San Pedro (Echinopsis lageniformis)',
       nombre_cientifico: 'Echinopsis lageniformis',
       probabilidad: 88,
-      descripcion: 'Cactus columnar icónico del cerro. Sus flores nocturnas son polinizadas por murìiélagos y colibríes. Fuente de néctar clave del ecosistema.',
+      descripcion: 'Cactus columnar icónico del cerro. Sus flores nocturnas son polinizadas por murciélagos y colibríes. Fuente de néctar clave del ecosistema.',
       tipo: 'planta',
       estado_conservacion: 'preocupacion menor',
     },
@@ -366,87 +391,29 @@ function getDatoDemo() {
 function getRespuestaDemo(pregunta) {
   const p = pregunta.toLowerCase()
 
-  // --- SALUDOS ---
   if (p.match(/^(hola|buenos|buenas|hey|hi|saludos|ola)/))
-    return '¡Hola! 🌿 Soy BioBot, el eco-asistente de BioScan Cochabamba. Estoy aquí para ayudarte a conocer la biodiversidad del Cerro San Pedro. ¿Qué especie o tema te gustaría explorar?'
+    return 'Bienvenido al Sistema de Asistencia de BioScan. Ingrese su consulta taxonómica o ecológica sobre el Cerro San Pedro.'
 
-  // --- MONTERITA ---
   if (p.includes('monterita') || p.includes('garleppi') || p.includes('poospiza'))
-    return '🐦 La Monterita de Cochabamba (Poospiza garleppi) es un ave ENDÉMICA en PELIGRO CRÍTICO de extinción. Solo vive en los bosques de Polylepis del Cerro San Pedro, entre 2800-3500m. Es el símbolo de la conservación del cerro.'
+    return 'Poospiza garleppi (Monterita de Cochabamba): Especie endémica clasificada en Peligro Crítico. Su hábitat estricto son los relictos de Polylepis entre 2800 y 3500 m.s.n.m.'
 
-  // --- TÚNEL ---
   if (p.includes('túnel') || p.includes('tunel') || p.includes('tunnel'))
-    return '🚧 El proyecto del túnel en el Cerro San Pedro fragmentaría directamente los corredores biológicos. Más de 700 especies dependen de este ecosistema interconectado. El Proyecto ATUQ de WWF trabaja para detenerlo.'
+    return 'El proyecto de túnel representa un riesgo crítico de fragmentación para el corredor biológico urbano del Cerro San Pedro, afectando directamente el flujo genético de más de 700 especies.'
 
-  // --- POLYLEPIS / QUEWIÑA ---
   if (p.includes('polylepis') || p.includes('quewiña') || p.includes('queñua') || p.includes('quewi'))
-    return '🌳 Los bosques de Polylepis (quewiña) son los ecosistemas más amenazados del Cerro San Pedro. Crecen a mayor altitud que cualquier otro árbol del mundo y son el único hábitat de la Monterita de Cochabamba.'
+    return 'Los bosques de Polylepis spp. constituyen el ecosistema más vulnerable del área de estudio. Actúan como reguladores hídricos y hábitat exclusivo de avifauna endémica.'
 
-  // --- ESPECIES / BIODIVERSIDAD ---
-  if (p.includes('cuántas') || p.includes('cuantas') || p.includes('cuántos') || p.includes('cuantos') || p.includes('número') || p.includes('total'))
-    return '📊 El Cerro San Pedro registra 700+ especies: 104 aves, 527 plantas vasculares, 41 mariposas, 10 murciélagos y decenas de insectos. Es uno de los corredores biológicos urbanos más importantes de Bolivia.'
+  if (p.includes('cuántas') || p.includes('cuantas') || p.includes('cuántos') || p.includes('cuantos') || p.includes('número') || p.includes('total') || p.includes('ave') || p.includes('pájaro') || p.includes('planta') || p.includes('flora') || p.includes('árbol'))
+    return 'El inventario actual registra más de 700 especies, componiéndose principalmente de: 527 especies vasculares, 104 aves, 41 lepidópteros y 10 quirópteros.'
 
-  // --- AVES ---
-  if (p.includes('ave') || p.includes('pájaro') || p.includes('pajaro') || p.includes('bird') || p.includes('pato') || p.includes('loro') || p.includes('colibr'))
-    return '🐦 El cerro alberga 104 especies de aves. Entre las más representativas: la Monterita de Cochabamba (endémica en peligro), el Colibrí Andino, el Zorzal boliviano y el Cernícalo Americano. ¡Son excelentes bioindicadores del ecosistema!'
-
-  // --- PLANTAS ---
-  if (p.includes('planta') || p.includes('flora') || p.includes('árbol') || p.includes('arbol') || p.includes('vegeta'))
-    return '🌿 Con 527 plantas vasculares registradas, la flora del Cerro San Pedro es extraordinaria. Destacan el Molle (Schinus molle), la Quewiña (Polylepis), el Cactus San Pedro y diversas especies de bromeliáceas nativas.'
-
-  // --- MARIPOSAS / INSECTOS ---
   if (p.includes('mariposa') || p.includes('insecto') || p.includes('butterfly') || p.includes('morpho'))
-    return '🦋 El Cerro San Pedro tiene 41 especies de mariposas registradas, incluyendo la espectacular Morpho. Las mariposas son bioindicadoras clave: su diversidad refleja directamente la salud del ecosistema.'
+    return 'El orden Lepidóptera está representado por 41 especies documentadas, destacando Morpho menelaus como bioindicador de calidad ambiental en el gradiente altitudinal bajo.'
 
-  // --- MURCIÉLAGOS ---
-  if (p.includes('murciélago') || p.includes('murcielago') || p.includes('bat'))
-    return '🦇 Hay 10 especies de murciélagos en el cerro. Son polinizadores nocturnos esenciales — polinizan el Cactus San Pedro cuando sus flores abren de noche. Sin murciélagos, muchos cactus desaparecerían.'
-
-  // --- PELIGRO / EXTINCIÓN / CONSERVACIÓN ---
   if (p.includes('peligro') || p.includes('extinci') || p.includes('amenaza') || p.includes('conserv'))
-    return '⚠️ En el Cerro San Pedro, 47 especies están en alguna categoría de amenaza. Las principales causas son: quemas, asentamientos ilegales, el proyecto del túnel y la contaminación. BioScan ayuda a documentar estas amenazas en tiempo real.'
+    return 'Actualmente, 47 especies locales se encuentran bajo alguna categoría de amenaza. Los principales vectores de presión antropogénica son la expansión urbana y los incendios provocados.'
 
-  // --- BIOSCAN ---
   if (p.includes('bioscan') || p.includes('app') || p.includes('aplicación') || p.includes('plataforma') || p.includes('proyecto'))
-    return '🌿 BioScan Cochabamba es una plataforma creada por estudiantes de la UPDS para monitorear la biodiversidad del Cerro San Pedro. Permite identificar especies con IA, registrar observaciones en mapa y consultar datos de iNaturalist en tiempo real.'
+    return 'BioScan es una plataforma de monitoreo biológico y ciencia ciudadana, diseñada para documentar sistemáticamente la biodiversidad taxonómica del área metropolitana de Cochabamba.'
 
-  // --- VOLUNTARIOS ---
-  if (p.includes('voluntario') || p.includes('participar') || p.includes('cómo ayudo') || p.includes('contribuir'))
-    return '🙌 ¡Podés ser un guardián del cerro! Solo tenés que salir al Cerro San Pedro, fotografiar especies que encuentres y subirlas a BioScan. La IA las identifica automáticamente y tu observación queda en el mapa para todos.'
-
-  // --- MOLLE ---
-  if (p.includes('molle') || p.includes('schinus'))
-    return '🌿 El Molle (Schinus molle) es el árbol nativo más icónico de Cochabamba. Sus frutos rojos alimentan a zorzales y picaflores. Tiene propiedades medicinales ancestrales y es fundamental para la conectividad del ecosistema.'
-
-  // --- CACTUS ---
-  if (p.includes('cactus') || p.includes('cacto') || p.includes('echinopsis'))
-    return '🌵 El Cactus San Pedro (Echinopsis lageniformis) es el cactus más característico del cerro. Sus flores blancas abren solo de noche y son polinizadas por murciélagos. Es también una planta de profundo valor cultural para los pueblos andinos.'
-
-  // --- ATUQ / WWF ---
-  if (p.includes('atuq') || p.includes('wwf') || p.includes('proyecto'))
-    return '🦊 El Proyecto ATUQ de WWF Bolivia trabaja específicamente en la conservación del Cerro San Pedro. Monitorea corredores biológicos, trabaja con comunidades locales y combate las quemas ilegales. BioScan complementa su trabajo con tecnología ciudadana.'
-
-  // --- CLIMA / TEMPERATURA ---
-  if (p.includes('clima') || p.includes('temperatura') || p.includes('lluvia') || p.includes('altitud'))
-    return '🌡️ El Cerro San Pedro va de los 2600m hasta más de 4000m de altitud. El clima varía desde templado en las laderas hasta frígido en las cumbres. Esta gradiente altitudinal explica la extraordinaria diversidad de especies que alberga.'
-
-  // --- CÓMO FUNCIONA LA IA ---
-  if (p.includes('cómo funciona') || p.includes('como funciona') || p.includes('ia') || p.includes('inteligencia') || p.includes('identificar') || p.includes('foto'))
-    return '📸 La IA de BioScan analiza tu foto y la compara con millones de imágenes de especies. Usa Plant.id para plantas e iNaturalist para animales. En segundos te da el nombre científico, descripción y estado de conservación de la especie fotografiada.'
-
-  // --- UPDS / EQUIPO ---
-  if (p.includes('upds') || p.includes('universidad') || p.includes('equipo') || p.includes('creador') || p.includes('quién hizo'))
-    return '👨‍💻 BioScan fue creado por Dylan, Tomas y Jhunior — estudiantes de Ingeniería en Sistemas de la UPDS Cochabamba — durante el Tech4Future Hack 2026, organizado por el Hub Boliviano de IA y Microsoft Learn Student Ambassadors.'
-
-  // --- ODS / SOSTENIBILIDAD ---
-  if (p.includes('ods') || p.includes('sostenible') || p.includes('objetivo') || p.includes('onu'))
-    return '🌍 BioScan está alineado con los ODS de la ONU: ODS 15 (Vida de ecosistemas terrestres), ODS 13 (Acción por el clima), ODS 11 (Ciudades sostenibles) y ODS 17 (Alianzas). Tecnología al servicio de la biodiversidad boliviana.'
-
-  // --- RESPUESTA GENERAL ---
-  const respuestasGenerales = [
-    '🌿 El Cerro San Pedro es un tesoro de biodiversidad en el corazón de Cochabamba. Con 700+ especies registradas, es un corredor biológico vital. ¿Querés saber sobre alguna especie en particular?',
-    '🦋 La biodiversidad del Cerro San Pedro es increíble. Desde la Monterita de Cochabamba (un ave que no existe en ningún otro lugar del mundo) hasta 41 especies de mariposas. ¿Qué te gustaría explorar?',
-    '🌳 El Cerro San Pedro enfrenta amenazas reales: quemas, asentamientos y el proyecto del túnel. BioScan nació para documentar y proteger este ecosistema único. ¿Cómo puedo ayudarte?',
-  ]
-  return respuestasGenerales[Math.floor(Math.random() * respuestasGenerales.length)]
+  return 'Consulta no reconocida. Por favor, reformule su pregunta especificando nombres científicos o términos ecológicos concretos.'
 }

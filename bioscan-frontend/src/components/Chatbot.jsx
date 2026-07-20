@@ -8,7 +8,7 @@ export default function Chatbot() {
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: '¡Hola! 🌿 Soy BioBot, tu eco-asistente. Pregúntame sobre la biodiversidad del Cerro San Pedro. Por ejemplo:\n\n• ¿Qué es la Monterita de Cochabamba?\n• ¿Cuántas especies tiene el cerro?\n• ¿Qué son los corredores biológicos?',
+      content: 'Hola. Soy BioBot, tu asistente taxonómico. ¿En qué te puedo ayudar sobre el Cerro San Pedro?',
     },
   ])
   const [input, setInput] = useState('')
@@ -36,7 +36,7 @@ export default function Chatbot() {
     } catch {
       setMessages((prev) => [
         ...prev,
-        { role: 'assistant', content: 'Disculpa, hubo un error. Intenta de nuevo. 🌿' },
+        { role: 'assistant', content: 'Excepción en el sistema. Intenta nuevamente.' },
       ])
     } finally {
       setLoading(false)
@@ -68,22 +68,22 @@ export default function Chatbot() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-24 right-6 z-50 w-[380px] max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-gray-100 flex flex-col overflow-hidden"
+            className="fixed bottom-24 right-6 z-50 w-[380px] max-w-[calc(100vw-2rem)] bg-[#030704]/90 backdrop-blur-2xl rounded-3xl shadow-2xl shadow-black/50 border border-white/10 flex flex-col overflow-hidden"
             style={{ height: '520px' }}
           >
             {/* Header */}
-            <div className="bg-gradient-to-r from-primary to-emerald-500 px-5 py-4 flex items-center gap-3">
-              <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                <Leaf className="w-5 h-5 text-white" />
+            <div className="bg-white/5 border-b border-white/10 px-5 py-4 flex items-center gap-3">
+              <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center border border-primary/20">
+                <Bot className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <p className="text-white font-bold text-sm">BioBot 🤖</p>
-                <p className="text-green-100 text-xs">Eco-Asistente de BioScan</p>
+                <p className="text-white font-bold text-sm tracking-wide">BioBot Core</p>
+                <p className="text-primary text-xs font-mono">Asistente Taxonómico</p>
               </div>
             </div>
 
             {/* Messages */}
-            <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4 chat-scroll bg-gray-50/50">
+            <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4 chat-scroll bg-transparent">
               {messages.map((msg, i) => (
                 <motion.div
                   key={i}
@@ -92,15 +92,15 @@ export default function Chatbot() {
                   className={`flex gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   {msg.role === 'assistant' && (
-                    <div className="w-7 h-7 bg-green-100 rounded-full flex-shrink-0 flex items-center justify-center mt-1">
+                    <div className="w-7 h-7 bg-primary/20 rounded-full flex-shrink-0 flex items-center justify-center mt-1 border border-primary/20">
                       <Bot className="w-4 h-4 text-primary" />
                     </div>
                   )}
                   <div
                     className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap
                       ${msg.role === 'user'
-                        ? 'bg-primary text-white rounded-br-md'
-                        : 'bg-white text-gray-700 border border-gray-100 shadow-sm rounded-bl-md'
+                        ? 'bg-primary text-white rounded-br-sm'
+                        : 'bg-white/10 text-slate-200 border border-white/5 shadow-sm rounded-bl-sm backdrop-blur-md'
                       }`}
                   >
                     {msg.content}
@@ -130,14 +130,14 @@ export default function Chatbot() {
             </div>
 
             {/* Input */}
-            <div className="p-3 border-t border-gray-100 bg-white">
+            <div className="p-3 border-t border-white/10 bg-transparent">
               <div className="flex items-center gap-2">
                 <input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder="Pregunta sobre biodiversidad..."
-                  className="flex-1 px-4 py-2.5 bg-gray-50 rounded-xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-primary/20 transition-all"
+                  placeholder="Preguntar a BioBot..."
+                  className="flex-1 px-4 py-2.5 bg-white/5 rounded-xl text-sm text-white placeholder-slate-500 outline-none focus:bg-white/10 focus:ring-1 focus:ring-primary/50 transition-all border border-transparent focus:border-white/10"
                 />
                 <button
                   onClick={handleSend}

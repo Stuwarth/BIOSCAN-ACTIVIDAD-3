@@ -117,11 +117,11 @@ export default function MapView({ fullPage = false }) {
       className={fullPage ? 'h-full' : ''}
     >
       {!fullPage && (
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-3">
-            🗺️ Mapa de Biodiversidad
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold text-white mb-4 tracking-tighter">
+            Mapa de Biodiversidad
           </h2>
-          <p className="text-gray-500">
+          <p className="text-slate-400 font-medium">
             Ubicación de las especies registradas en el Cerro San Pedro
           </p>
         </div>
@@ -133,20 +133,20 @@ export default function MapView({ fullPage = false }) {
           <button
             key={tipo}
             onClick={() => setFiltro(tipo)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all capitalize
+            className={`px-5 py-2 rounded-full text-sm font-medium transition-all capitalize border
               ${filtro === tipo
-                ? 'bg-primary text-white shadow-md'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                ? 'bg-primary text-white border-primary shadow-[0_0_15px_rgba(22,163,74,0.3)]'
+                : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10 hover:text-white'
               }`}
           >
-            {tipo === 'todos' ? '🌍 Todos' : tipo}
+            {tipo === 'todos' ? 'Todos' : tipo}
           </button>
         ))}
 
         <button
           onClick={cargarINaturalist}
           disabled={loading}
-          className="ml-auto flex items-center gap-2 px-4 py-1.5 bg-secondary text-white rounded-full text-sm font-medium hover:bg-secondary-dark transition-all disabled:opacity-50"
+          className="ml-auto flex items-center gap-2 px-5 py-2 bg-white/10 border border-white/20 text-white rounded-full text-sm font-medium hover:bg-white/20 transition-all disabled:opacity-50"
         >
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <MapPin className="w-4 h-4" />}
           Cargar iNaturalist
@@ -154,8 +154,8 @@ export default function MapView({ fullPage = false }) {
       </div>
 
       {/* Map */}
-      <div className={`rounded-2xl overflow-hidden shadow-lg border border-gray-100 ${fullPage ? 'h-[calc(100vh-280px)]' : 'h-[500px]'}`}>
-        <MapContainer center={CENTER} zoom={14} className="w-full h-full" scrollWheelZoom={true}>
+      <div className={`rounded-3xl overflow-hidden shadow-2xl border border-white/10 ${fullPage ? 'h-[calc(100vh-280px)]' : 'h-[600px] relative z-10'}`}>
+        <MapContainer center={CENTER} zoom={14} className="w-full h-full bg-[#030704]" scrollWheelZoom={true}>
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -181,9 +181,9 @@ export default function MapView({ fullPage = false }) {
                   <p className="font-bold text-sm">{esp.nombre_comun}</p>
                   <p className="text-xs italic text-gray-500">{esp.nombre_cientifico}</p>
                   <span className={`inline-block mt-1 text-xs px-2 py-0.5 rounded-full
-                    ${esp.estado_conservacion === 'en peligro' ? 'bg-red-100 text-red-700' :
-                      esp.estado_conservacion === 'vulnerable' ? 'bg-amber-100 text-amber-700' :
-                      'bg-green-100 text-green-700'}`}
+                    ${esp.estado_conservacion === 'en peligro' ? 'bg-red-500/20 text-red-500' :
+                      esp.estado_conservacion === 'vulnerable' ? 'bg-amber-500/20 text-amber-500' :
+                      'bg-primary/20 text-primary'}`}
                   >
                     {esp.estado_conservacion}
                   </span>
@@ -197,8 +197,8 @@ export default function MapView({ fullPage = false }) {
       {/* Legend */}
       <div className="flex flex-wrap gap-3 mt-4 justify-center">
         {Object.entries(tipoColor).filter(([k]) => k !== 'otro').map(([tipo, color]) => (
-          <div key={tipo} className="flex items-center gap-1.5 text-xs text-gray-500">
-            <div className="w-3 h-3 rounded-full" style={{ background: color }} />
+          <div key={tipo} className="flex items-center gap-2 text-xs font-medium text-slate-400 bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
+            <div className="w-3 h-3 rounded-full shadow-sm" style={{ background: color }} />
             <span className="capitalize">{tipo}</span>
           </div>
         ))}

@@ -5,23 +5,29 @@
   --color-primary: #16a34a;
   --color-primary-dark: #15803d;
   --color-primary-light: #bbf7d0;
-  --color-secondary: #0078D4;
-  --color-secondary-dark: #005a9e;
+  --color-secondary: #059669;
+  --color-secondary-dark: #047857;
   --color-accent: #f59e0b;
-  --color-danger: #dc2626;
+  --color-danger: #ef4444;
   --color-surface: #f0fdf4;
-  --color-surface-dark: #1a1a2e;
+  --color-surface-dark: #14532d;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
 }
 
 /* ===== BASE STYLES ===== */
 @layer base {
   body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    @apply bg-white text-gray-900 antialiased;
+    @apply bg-[#030704] text-slate-200 antialiased selection:bg-primary/30 selection:text-white;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
   }
 
   html {
-    scroll-behavior: smooth;
+    /* Removed scroll-behavior: smooth; because it conflicts with Lenis */
   }
 }
 
@@ -33,24 +39,88 @@
   z-index: 1;
 }
 
-/* ===== ANIMATIONS ===== */
+/* ===== ORGANIC ANIMATION KEYFRAMES ===== */
+
+/* Breathing — elements that feel alive, like a sleeping animal's chest */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.04); opacity: 1; }
+}
+
+/* Drift — lateral ondulant motion like leaves in gentle wind */
+@keyframes drift {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(6px, -4px) rotate(1deg); }
+  50% { transform: translate(-3px, -8px) rotate(-0.5deg); }
+  75% { transform: translate(-6px, -2px) rotate(0.5deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+/* Spore float — pollen/firefly particles with Brownian motion */
+@keyframes spore-float {
+  0% { transform: translate(0, 0) scale(1); opacity: 0; }
+  10% { opacity: 0.7; }
+  50% { transform: translate(var(--dx, 30px), var(--dy, -60px)) scale(0.8); opacity: 0.5; }
+  90% { opacity: 0.2; }
+  100% { transform: translate(var(--dx2, -20px), var(--dy2, -120px)) scale(0.4); opacity: 0; }
+}
+
+/* Shimmer — bioluminescent glow that sweeps across a surface */
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Fog drift — volumetric mist that drifts slowly across landscape */
+@keyframes fog-drift {
+  0% { transform: translateX(-10%) scaleY(1); opacity: 0.15; }
+  50% { transform: translateX(5%) scaleY(1.05); opacity: 0.25; }
+  100% { transform: translateX(-10%) scaleY(1); opacity: 0.15; }
+}
+
+/* Grow branch — organic progress from seed to full branch */
+@keyframes grow-branch {
+  0% { transform: scaleX(0); transform-origin: left; }
+  60% { transform: scaleX(1.02); }
+  100% { transform: scaleX(1); transform-origin: left; }
+}
+
+/* Gentle vertical float — used for pins, labels */
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
 }
 
+/* Pulse green — ring expansion for active states */
 @keyframes pulse-green {
   0%, 100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.4); }
   50% { box-shadow: 0 0 0 12px rgba(22, 163, 74, 0); }
 }
 
-.animate-float {
-  animation: float 3s ease-in-out infinite;
+/* Bioluminescent glow — organic pulsing light */
+@keyframes bio-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.15), 0 0 60px rgba(16, 185, 129, 0.05); }
+  50% { box-shadow: 0 0 30px rgba(16, 185, 129, 0.3), 0 0 80px rgba(16, 185, 129, 0.1); }
 }
 
-.animate-pulse-green {
-  animation: pulse-green 2s ease-in-out infinite;
+/* Reveal up — organic entrance from below */
+@keyframes reveal-up {
+  0% { transform: translateY(40px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
 }
+
+/* Utility Classes */
+.animate-float { animation: float 3s ease-in-out infinite; }
+.animate-pulse-green { animation: pulse-green 2s ease-in-out infinite; }
+.animate-breathe { animation: breathe 6s ease-in-out infinite; }
+.animate-drift { animation: drift 12s ease-in-out infinite; }
+.animate-shimmer {
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+}
+.animate-bio-glow { animation: bio-glow 4s ease-in-out infinite; }
+.animate-fog { animation: fog-drift 20s ease-in-out infinite; }
+.animate-grow { animation: grow-branch 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
 
 /* ===== GLASSMORPHISM ===== */
 .glass {
@@ -80,4 +150,21 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* ===== LENIS SMOOTH SCROLL ===== */
+html.lenis, html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
 }

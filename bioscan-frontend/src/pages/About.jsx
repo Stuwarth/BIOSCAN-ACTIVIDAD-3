@@ -1,16 +1,21 @@
-import { motion } from 'framer-motion'
-import { Leaf, Target, Users, Code, Shield, GraduationCap, Globe, Bird, BookOpen } from 'lucide-react'
+import { useEffect, useRef } from 'react'
+import { Helmet } from 'react-helmet-async'
+import { Leaf, Target, Users, Code, Shield, GraduationCap, Globe, Bird, BookOpen, Github, Linkedin } from 'lucide-react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const tecnologias = [
-  { nombre: 'React 19 + Vite 6', desc: 'Frontend moderno, rápido y responsive', emoji: '⚛️' },
-  { nombre: 'Tailwind CSS v4', desc: 'Estilos utilitarios con diseño profesional', emoji: '🎨' },
-  { nombre: 'NestJS (TypeScript)', desc: 'Backend profesional, escalable y tipado', emoji: '🏗️' },
-  { nombre: 'Plant.id API', desc: 'IA de visión para identificar plantas por foto', emoji: '🌿' },
-  { nombre: 'iNaturalist API', desc: 'Base de datos real de biodiversidad global', emoji: '🔬' },
-  { nombre: 'GBIF API', desc: 'Datos de biodiversidad a escala mundial', emoji: '🌍' },
-  { nombre: 'Groq / Llama 3', desc: 'Chatbot eco-asistente impulsado por IA', emoji: '🤖' },
-  { nombre: 'Leaflet.js + OpenStreetMap', desc: 'Mapas interactivos 100% open-source', emoji: '🗺️' },
-  { nombre: 'Framer Motion', desc: 'Animaciones fluidas y experiencia premium', emoji: '✨' },
+  { nombre: 'React 19 + Vite 6', desc: 'Frontend moderno, rápido y responsive', icon: Code },
+  { nombre: 'Tailwind CSS v4', desc: 'Estilos utilitarios con diseño profesional', icon: Code },
+  { nombre: 'NestJS (TypeScript)', desc: 'Backend profesional, escalable y tipado', icon: Code },
+  { nombre: 'Plant.id API', desc: 'Modelos de visión para identificar plantas por foto', icon: Code },
+  { nombre: 'iNaturalist API', desc: 'Base de datos real de biodiversidad global', icon: Code },
+  { nombre: 'GBIF API', desc: 'Datos de biodiversidad a escala mundial', icon: Code },
+  { nombre: 'Groq / Llama 3', desc: 'Motor de inferencia avanzado', icon: Code },
+  { nombre: 'Leaflet.js', desc: 'Mapas geoespaciales interactivos', icon: Code },
+  { nombre: 'GSAP + Lenis', desc: 'Motor de animaciones y físicas fluidas', icon: Code },
 ]
 
 const ods = [
@@ -18,404 +23,477 @@ const ods = [
     num: 15,
     titulo: 'Vida de Ecosistemas Terrestres',
     desc: 'Proteger, restaurar y promover el uso sostenible de los ecosistemas terrestres y detener la pérdida de biodiversidad.',
-    color: 'bg-green-600',
-    icon: '🌳',
+    color: 'bg-green-500/10 border-green-500/20 text-green-400 shadow-[0_0_20px_rgba(34,197,94,0.1)]',
   },
   {
     num: 13,
     titulo: 'Acción por el Clima',
     desc: 'Adoptar medidas urgentes para combatir el cambio climático y sus efectos sobre el planeta.',
-    color: 'bg-emerald-700',
-    icon: '🌡️',
+    color: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.1)]',
   },
   {
     num: 11,
     titulo: 'Ciudades Sostenibles',
     desc: 'Hacer que las ciudades sean inclusivas, seguras, resilientes y sostenibles, preservando sus áreas verdes.',
-    color: 'bg-blue-600',
-    icon: '🏙️',
+    color: 'bg-blue-500/10 border-blue-500/20 text-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.1)]',
   },
   {
     num: 17,
     titulo: 'Alianzas para los Objetivos',
     desc: 'Fortalecer los medios de implementación mediante alianzas entre gobierno, sociedad civil y sector privado.',
-    color: 'bg-blue-800',
-    icon: '🤝',
+    color: 'bg-white/5 border-white/10 text-white shadow-[0_0_20px_rgba(255,255,255,0.05)]',
   },
 ]
 
 export default function About() {
-  return (
-    <div className="min-h-screen">
-      {/* Hero */}
-      <div className="bg-gradient-to-br from-green-700 via-emerald-700 to-teal-800 py-24 text-white relative overflow-hidden">
-        {/* Decorative blobs */}
-        <div className="absolute top-0 left-0 w-96 h-96 bg-white/5 rounded-full -translate-x-1/2 -translate-y-1/2" />
-        <div className="absolute bottom-0 right-0 w-80 h-80 bg-white/5 rounded-full translate-x-1/4 translate-y-1/4" />
+  const containerRef = useRef(null)
 
-        <div className="max-w-4xl mx-auto px-4 text-center relative">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="inline-flex items-center gap-2 bg-white/15 border border-white/20 px-4 py-1.5 rounded-full text-sm mb-6 backdrop-blur-sm">
-              <Shield className="w-4 h-4" />
-              Tech4Future Hack 2026 — Cochabamba, Bolivia
-            </div>
-            <h1 className="text-4xl sm:text-5xl font-bold mb-6 leading-tight">
-              Sobre BioScan Cochabamba
-            </h1>
-            <p className="text-xl text-green-100 max-w-2xl mx-auto leading-relaxed">
-              Una plataforma de monitoreo de biodiversidad impulsada por IA, creada por estudiantes
-              de la <strong className="text-white">UPDS Cochabamba</strong> para proteger el
-              Cerro San Pedro y sus <strong className="text-white">412+ especies documentadas</strong> por la UMSS.
-            </p>
-          </motion.div>
-        </div>
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      
+      // Hero Text Reveal
+      gsap.fromTo(".about-hero-title",
+        { y: 100, opacity: 0, rotateX: -30 },
+        { y: 0, opacity: 1, rotateX: 0, duration: 1.2, ease: "power4.out", stagger: 0.1 }
+      )
+      
+      gsap.fromTo(".about-hero-subtitle",
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 1, delay: 0.5 }
+      )
+
+      // Secciones animadas al scrollear
+      gsap.utils.toArray('.gsap-section').forEach((section) => {
+        gsap.fromTo(section,
+          { opacity: 0, y: 100 },
+          {
+            opacity: 1, y: 0, duration: 1, ease: "power3.out",
+            scrollTrigger: {
+              trigger: section,
+              start: "top 85%",
+              toggleActions: "play none none reverse"
+            }
+          }
+        )
+      })
+
+      // Staggering cards (ODS, Stats, Tech)
+      gsap.utils.toArray('.gsap-stagger-container').forEach((container) => {
+        const cards = container.querySelectorAll('.gsap-card')
+        gsap.fromTo(cards,
+          { opacity: 0, y: 50, scale: 0.9 },
+          {
+            opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "back.out(1.2)", stagger: 0.1,
+            scrollTrigger: {
+              trigger: container,
+              start: "top 85%",
+              toggleActions: "play none none reverse"
+            }
+          }
+        )
+      })
+
+      // Parallax background
+      gsap.to(".parallax-bg", {
+        y: "20%",
+        ease: "none",
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top top",
+          end: "bottom bottom",
+          scrub: true
+        }
+      })
+
+      // Scrollytelling anims
+      gsap.utils.toArray('.scrolly-step').forEach((step, i) => {
+        ScrollTrigger.create({
+          trigger: step,
+          start: "top 60%",
+          end: "bottom 40%",
+          onEnter: () => {
+            gsap.to(".scrolly-bg", { opacity: 0, duration: 0.8 });
+            gsap.to(`.scrolly-bg-${i + 1}`, { opacity: 1, duration: 0.8 });
+          },
+          onEnterBack: () => {
+            gsap.to(".scrolly-bg", { opacity: 0, duration: 0.8 });
+            gsap.to(`.scrolly-bg-${i + 1}`, { opacity: 1, duration: 0.8 });
+          }
+        });
+      });
+
+    }, containerRef)
+
+    return () => ctx.revert()
+  }, [])
+
+  return (
+    <div ref={containerRef} className="min-h-screen bg-[#030704] relative">
+      <Helmet>
+        <title>Sobre Nosotros | BioScan</title>
+        <meta name="description" content="Conoce la arquitectura tecnológica y el equipo detrás de BioScan Cochabamba." />
+      </Helmet>
+
+      {/* Cinematic Ambient Background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="parallax-bg absolute top-0 right-0 w-[120vw] h-[120vh] bg-primary/10 rounded-full blur-[150px] opacity-60 translate-x-1/4 -translate-y-1/4" />
+        <div className="parallax-bg absolute bottom-0 left-0 w-[100vw] h-[100vh] bg-emerald-900/30 rounded-full blur-[150px] opacity-50 -translate-x-1/4 translate-y-1/4" />
       </div>
 
-      {/* El problema */}
-      <section className="py-16 bg-white">
-        <div className="max-w-4xl mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl font-bold text-gray-900 mb-6 flex items-center gap-3">
-              <Target className="w-8 h-8 text-red-500" />
-              El Problema
-            </h2>
-            <div className="prose prose-lg max-w-none text-gray-600">
-              <p>
-                El <strong>Cerro San Pedro</strong>, ubicado entre los municipios de Cochabamba y Sacaba,
-                es un <strong>remanente del ecosistema seco interandino</strong> que conserva una alta biodiversidad
-                pese a su ubicación urbana. Según el Centro de Biodiversidad y Genética de la UMSS,
-                alberga <strong>412+ especies documentadas</strong>:
-              </p>
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 my-6 not-prose">
-                {[
-                  { num: '266', label: 'Plantas', sub: '19 endémicas', emoji: '🌿' },
-                  { num: '117', label: 'Aves', sub: 'incl. tordo boliviano', emoji: '🐦' },
-                  { num: '18', label: 'Mamíferos', sub: '3 carnívoros', emoji: '🦊' },
-                  { num: '7', label: 'Reptiles', sub: 'nativos', emoji: '🦎' },
-                  { num: '4', label: 'Anfibios', sub: 'nativos', emoji: '🐸' },
-                ].map((s) => (
-                  <div key={s.label} className="bg-green-50 border border-green-200 rounded-xl p-3 text-center">
-                    <p className="text-2xl">{s.emoji}</p>
-                    <p className="text-2xl font-black text-green-700">{s.num}</p>
-                    <p className="text-xs font-semibold text-gray-700">{s.label}</p>
-                    <p className="text-[10px] text-gray-500">{s.sub}</p>
-                  </div>
-                ))}
-              </div>
-              <p>
-                Sin embargo, enfrenta múltiples amenazas:
-              </p>
-              <ul className="space-y-2">
-                <li>🏘️ <strong>Urbanización no planificada</strong> que destruye hábitat nativo</li>
-                <li>🔥 <strong>Incendios provocados</strong> que arrasan vegetación endémica</li>
-                <li>🌾 <strong>Especies invasoras</strong> que desplazan a la flora y fauna nativa</li>
-                <li>📝 <strong>Falta de tecnología</strong> — los voluntarios registran datos manualmente en cuadernos</li>
-              </ul>
-              <p>
-                Especies endémicas como la <strong>Monterita de Cochabamba</strong> (<em>Poospiza garleppi</em>)
-                y cactáceas como <em>Parodia schwebsiana</em> y <em>Opuntia cochabambansis</em> son
-                exclusivas de esta zona y están amenazadas.
-              </p>
+      <div className="relative z-10">
+        {/* Hero */}
+        <div className="pt-32 pb-24 border-b border-white/10 relative overflow-hidden bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L3N2Zz4=')]">
+          <div className="max-w-4xl mx-auto px-4 text-center relative z-10" style={{ perspective: "1000px" }}>
+            <div className="about-hero-title inline-flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-1.5 rounded-full text-xs font-mono uppercase tracking-widest text-slate-300 mb-8 backdrop-blur-md">
+              <Shield className="w-4 h-4 text-primary" />
+              Tech4Future Hack 2026 — Cochabamba
             </div>
-          </motion.div>
+            <h1 className="text-5xl sm:text-7xl font-extrabold text-white mb-6 tracking-tighter leading-tight overflow-hidden">
+              <div className="about-hero-title">Ingeniería Aplicada a la</div>
+              <div className="about-hero-title text-transparent bg-clip-text bg-gradient-to-r from-primary to-emerald-400 pb-2">Conservación</div>
+            </h1>
+            <p className="about-hero-subtitle text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed font-light">
+              Plataforma de análisis taxonómico impulsada por inteligencia artificial, diseñada para proteger el ecosistema endémico de Cochabamba.
+            </p>
+          </div>
         </div>
-      </section>
 
-      {/* Respaldo Científico */}
-      <section className="py-16 bg-gradient-to-r from-blue-50 to-indigo-50">
-        <div className="max-w-4xl mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl font-bold text-gray-900 mb-6 flex items-center gap-3">
-              <BookOpen className="w-8 h-8 text-blue-600" />
-              Respaldo Científico
+        {/* Scrollytelling - El Problema */}
+        <section className="relative w-full bg-black border-y border-white/10">
+          
+          {/* Sticky Backgrounds */}
+          <div className="sticky top-0 h-screen w-full overflow-hidden z-0">
+            {/* Base Backgrounds */}
+            <div className="scrolly-bg scrolly-bg-1 absolute inset-0 w-full h-full bg-cover bg-center transition-transform duration-[10s] hover:scale-105 opacity-100" style={{ backgroundImage: "url('/images/scrollytelling/cerro.jpg')" }} />
+            <div className="scrolly-bg scrolly-bg-2 absolute inset-0 w-full h-full bg-cover bg-center transition-transform duration-[10s] hover:scale-105 opacity-0" style={{ backgroundImage: "url('/images/scrollytelling/fire.jpg')" }} />
+            <div className="scrolly-bg scrolly-bg-3 absolute inset-0 w-full h-full bg-cover bg-center transition-transform duration-[10s] hover:scale-105 opacity-0" style={{ backgroundImage: "url('/images/scrollytelling/bird.jpg')" }} />
+            
+            {/* Dark Overlays para mejorar la legibilidad del texto */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/30" />
+            
+            {/* Título pegajoso sutil */}
+            <div className="absolute top-24 left-8 flex items-center gap-2 opacity-50 z-10 hidden md:flex">
+              <Target className="w-5 h-5 text-emerald-500" />
+              <span className="text-sm font-mono tracking-widest uppercase text-white">Contexto Operativo</span>
+            </div>
+          </div>
+
+          {/* Scrolling Text Content */}
+          <div className="relative z-10 -mt-[100vh]">
+            
+            {/* Step 1 */}
+            <div className="scrolly-step h-[120vh] flex items-center justify-center px-4">
+              <div className="bg-black/60 backdrop-blur-xl p-8 md:p-12 rounded-3xl max-w-2xl text-center border border-white/10 shadow-2xl">
+                <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tighter">
+                  El Pulmón de <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">Cochabamba</span>
+                </h2>
+                <p className="text-lg md:text-xl text-slate-300 font-light leading-relaxed mb-8">
+                  El Cerro San Pedro constituye un área de preservación crítica en el ecosistema seco interandino. Según investigaciones de la UMSS, alberga más de 400 taxones documentados.
+                </p>
+                <div className="grid grid-cols-3 gap-4 border-t border-white/10 pt-6">
+                  <div>
+                    <p className="text-3xl font-bold text-white">266</p>
+                    <p className="text-xs text-slate-400 uppercase tracking-widest">Flora</p>
+                  </div>
+                  <div>
+                    <p className="text-3xl font-bold text-white">117</p>
+                    <p className="text-xs text-slate-400 uppercase tracking-widest">Avifauna</p>
+                  </div>
+                  <div>
+                    <p className="text-3xl font-bold text-white">29</p>
+                    <p className="text-xs text-slate-400 uppercase tracking-widest">Fauna</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Step 2 */}
+            <div className="scrolly-step h-[120vh] flex items-center justify-center px-4">
+              <div className="bg-red-950/60 backdrop-blur-xl p-8 md:p-12 rounded-3xl max-w-2xl text-center border border-red-500/20 shadow-[0_0_50px_rgba(239,68,68,0.1)]">
+                <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tighter">
+                  Bajo <span className="text-red-400">Amenaza</span> Constante
+                </h2>
+                <p className="text-lg md:text-xl text-slate-300 font-light leading-relaxed mb-8">
+                  Muchos de estos taxones enfrentan amenazas sistemáticas. La pérdida de biomasa es irreversible si no actuamos pronto.
+                </p>
+                <ul className="text-left space-y-4 text-slate-300 font-medium bg-black/40 p-6 rounded-2xl">
+                  <li className="flex items-center gap-3">
+                    <div className="w-2 h-2 rounded-full bg-red-500 flex-shrink-0" /> Fragmentación de hábitat por urbanización.
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <div className="w-2 h-2 rounded-full bg-orange-500 flex-shrink-0" /> Incendios forestales antrópicos (provocados).
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <div className="w-2 h-2 rounded-full bg-yellow-500 flex-shrink-0" /> Introducción de flora invasora que desplaza la nativa.
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="scrolly-step h-[120vh] flex items-center justify-center px-4">
+              <div className="bg-emerald-950/60 backdrop-blur-xl p-8 md:p-12 rounded-3xl max-w-2xl text-center border border-emerald-500/20 shadow-[0_0_50px_rgba(16,185,129,0.1)]">
+                <div className="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Shield className="w-8 h-8 text-emerald-400" />
+                </div>
+                <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tighter">
+                  Nuestra Misión con BioScan
+                </h2>
+                <p className="text-lg md:text-xl text-slate-300 font-light leading-relaxed">
+                  Ante la ausencia de infraestructura tecnológica para el monitoreo de conservación, nace BioScan.
+                  Utilizamos Inteligencia Artificial para empoderar a los ciudadanos a monitorear y proteger la biodiversidad que nos queda.
+                </p>
+              </div>
+            </div>
+            
+          </div>
+        </section>
+
+        {/* Respaldo Científico */}
+        <section className="gsap-section py-24 border-y border-white/10 bg-white/5">
+          <div className="max-w-4xl mx-auto px-4">
+            <h2 className="text-4xl font-extrabold text-white mb-8 tracking-tighter flex items-center gap-3">
+              <BookOpen className="w-8 h-8 text-blue-500" />
+              Literatura Científica Base
             </h2>
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-blue-100">
-              <div className="flex items-start gap-4 mb-5">
-                <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <GraduationCap className="w-7 h-7 text-blue-700" />
+            <div className="bg-[#030704] rounded-3xl p-8 border border-white/10 backdrop-blur-xl transform transition-transform hover:scale-[1.02] duration-500">
+              <div className="flex items-start gap-5 mb-6">
+                <div className="w-16 h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center flex-shrink-0">
+                  <GraduationCap className="w-8 h-8 text-blue-500" />
                 </div>
                 <div>
-                  <p className="font-bold text-gray-900">Biodiversidad Nativa del Cerro San Pedro</p>
-                  <p className="text-sm text-gray-500">Centro de Biodiversidad y Genética — UMSS (2025)</p>
-                  <p className="text-xs text-blue-600 mt-1">Policy Brief · ResearchGate</p>
+                  <p className="font-bold text-white text-lg">Investigación Académica UMSS</p>
+                  <p className="text-sm text-slate-400 mt-1">Centro de Biodiversidad y Genética (2025)</p>
+                  <p className="text-xs text-blue-400 mt-2 font-mono uppercase tracking-wider">Validación de Datos</p>
                 </div>
               </div>
-              <p className="text-sm text-gray-600 leading-relaxed mb-4">
-                Este estudio del Centro de Biodiversidad y Genética de la <strong>Universidad Mayor de San Simón (UMSS)</strong> documenta
-                la riqueza biológica del Cerro San Pedro, identificando 266 especies de plantas (19 endémicas, 5 amenazadas),
-                117 aves, 18 mamíferos nativos, 7 reptiles y 4 anfibios. El estudio destaca la importancia de este ecosistema
-                seco interandino y su conectividad con el <strong>Parque Nacional Tunari</strong> a través de un corredor de bosque ribereño.
+              <p className="text-slate-300 leading-relaxed mb-6 font-light">
+                La arquitectura de datos de esta plataforma integra la base taxonómica del estudio de la UMSS,
+                garantizando rigurosidad científica en la identificación de flora vascular y avifauna.
               </p>
-              <div className="flex flex-wrap gap-3">
-                {[
-                  { icon: '🏛️', text: 'UMSS — Centro de Biodiversidad' },
-                  { icon: '🌍', text: 'WWF — Proyecto ATUQ' },
-                  { icon: '🔬', text: 'iNaturalist — Llajta Viva 2024' },
-                ].map((ref) => (
-                  <span key={ref.text} className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-800 px-3 py-1.5 rounded-full text-xs font-medium">
-                    {ref.icon} {ref.text}
-                  </span>
-                ))}
-              </div>
             </div>
-          </motion.div>
-        </div>
-      </section>
+          </div>
+        </section>
 
-      {/* La solución */}
-      <section className="py-16 bg-green-50">
-        <div className="max-w-4xl mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+        {/* La solución */}
+        <section className="gsap-section py-24">
+          <div className="max-w-4xl mx-auto px-4">
+            <h2 className="text-4xl font-extrabold text-white mb-8 tracking-tighter flex items-center gap-3">
               <Leaf className="w-8 h-8 text-primary" />
-              Nuestra Solución
+              Arquitectura de Solución
             </h2>
-            <div className="bg-white rounded-2xl p-8 shadow-sm border border-green-100">
-              <p className="text-lg text-gray-600 mb-6">
-                <strong>BioScan Cochabamba</strong> digitaliza el monitoreo de biodiversidad:
-              </p>
-              <div className="grid sm:grid-cols-2 gap-4">
-                {[
-                  { icon: '📸', title: 'Identificación con IA', desc: 'Sube una foto y la IA identifica la especie al instante' },
-                  { icon: '🗺️', title: 'Mapa interactivo', desc: 'Visualiza dónde se encuentran las especies en el cerro' },
-                  { icon: '🤖', title: 'Eco-Asistente', desc: 'Chatbot que responde preguntas sobre biodiversidad local' },
-                  { icon: '📊', title: 'Dashboard en tiempo real', desc: 'Estadísticas de especies, estado de conservación y más' },
-                ].map((item) => (
-                  <div key={item.title} className="flex gap-4 p-4 bg-green-50 rounded-xl">
-                    <span className="text-3xl">{item.icon}</span>
-                    <div>
-                      <p className="font-semibold text-gray-900">{item.title}</p>
-                      <p className="text-sm text-gray-600">{item.desc}</p>
-                    </div>
+            <div className="gsap-stagger-container grid sm:grid-cols-2 gap-6">
+              {[
+                { icon: Target, title: 'Visión Computacional', desc: 'Análisis de imágenes en tiempo real para clasificación de taxones.' },
+                { icon: Globe, title: 'Sistemas SIG', desc: 'Cartografía digital interactiva para rastreo de avistamientos.' },
+                { icon: Code, title: 'Modelos de Lenguaje (LLM)', desc: 'Motor NLP para procesamiento de procesamiento de consultas biológicas complejas.' },
+                { icon: Shield, title: 'Telemetría de Datos', desc: 'Dashboard analítico para control de estados de conservación.' },
+              ].map((item) => {
+                const Icon = item.icon
+                return (
+                  <div key={item.title} className="gsap-card p-6 bg-white/5 border border-white/10 rounded-3xl hover:bg-white/10 hover:border-primary/30 transition-colors duration-500">
+                    <Icon className="w-8 h-8 text-primary mb-4" />
+                    <p className="font-bold text-white mb-2">{item.title}</p>
+                    <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
                   </div>
-                ))}
-              </div>
+                )
+              })}
             </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ODS */}
-      <section className="py-16 bg-white">
-        <div className="max-w-5xl mx-auto px-4">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl font-bold text-gray-900 mb-3">
-              🌍 Objetivos de Desarrollo Sostenible
-            </h2>
-            <p className="text-gray-500 max-w-xl mx-auto">
-              BioScan está alineado con la Agenda 2030 de la ONU — contribuimos directamente a 4 ODS.
-            </p>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {ods.map((o) => (
-              <motion.div
-                key={o.num}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow"
-              >
-                <div className={`${o.color} text-white p-5 text-center`}>
-                  <p className="text-3xl mb-1">{o.icon}</p>
-                  <p className="text-4xl font-black">ODS {o.num}</p>
+        </section>
+
+        {/* ODS */}
+        <section className="gsap-section py-24 border-y border-white/10 bg-white/5 overflow-hidden">
+          <div className="max-w-5xl mx-auto px-4">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-extrabold text-white mb-4 tracking-tighter">
+                Objetivos de Desarrollo Sostenible
+              </h2>
+              <p className="text-slate-400 max-w-xl mx-auto font-light">
+                Despliegue tecnológico estructurado bajo los lineamientos de la Agenda 2030 de la ONU.
+              </p>
+            </div>
+            <div className="gsap-stagger-container grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {ods.map((o) => (
+                <div
+                  key={o.num}
+                  className={`gsap-card ${o.color} rounded-3xl p-6 shadow-2xl hover:scale-105 transition-transform duration-500 cursor-default`}
+                >
+                  <div className="mb-4">
+                    <p className="text-3xl font-black text-white/50 tracking-tighter">ODS {o.num}</p>
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-white mb-3 text-lg leading-tight">{o.titulo}</h3>
+                    <p className="text-sm text-white/70 leading-relaxed font-light">{o.desc}</p>
+                  </div>
                 </div>
-                <div className="p-4">
-                  <h3 className="font-bold text-gray-900 mb-2 text-sm">{o.titulo}</h3>
-                  <p className="text-xs text-gray-500 leading-relaxed">{o.desc}</p>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Tecnologías */}
+        <section className="gsap-section py-24">
+          <div className="max-w-5xl mx-auto px-4">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-extrabold text-white mb-4 flex items-center justify-center gap-3 tracking-tighter">
+                <Code className="w-8 h-8 text-secondary" />
+                Stack Tecnológico
+              </h2>
+              <p className="text-slate-400 max-w-xl mx-auto font-light">
+                Arquitectura de software moderna, escalable y optimizada para alto rendimiento.
+              </p>
+            </div>
+            <div className="gsap-stagger-container grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {tecnologias.map((tech, i) => {
+                const Icon = tech.icon
+                return (
+                  <div
+                    key={tech.nombre}
+                    className="gsap-card bg-white/5 rounded-2xl p-6 border border-white/10 hover:border-primary/50 hover:bg-white/10 transition-all duration-500 group backdrop-blur-sm"
+                  >
+                    <Icon className="w-6 h-6 text-slate-500 mb-4 group-hover:text-primary transition-colors" />
+                    <p className="font-bold text-white text-base group-hover:text-primary transition-colors mb-1">{tech.nombre}</p>
+                    <p className="text-sm text-slate-400 leading-relaxed font-light">{tech.desc}</p>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* Equipo */}
+        <section className="gsap-section py-24 border-t border-white/10 bg-white/5">
+          <div className="max-w-5xl mx-auto px-4">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-extrabold text-white mb-4 tracking-tighter">
+                Desarrolladores Core
+              </h2>
+              <p className="text-slate-400 max-w-2xl mx-auto font-light">
+                Equipo técnico enfocado en ingeniería de software, arquitectura de datos y diseño UI/UX.
+              </p>
+            </div>
+
+            <div className="gsap-stagger-container grid sm:grid-cols-3 gap-8">
+              {/* Dylan - Frontend */}
+              <div className="gsap-card bg-[#050B07]/80 backdrop-blur-xl rounded-3xl p-8 border border-white/5 hover:border-emerald-500/30 hover:shadow-[0_15px_40px_rgba(16,185,129,0.15)] transition-all duration-500 text-center group">
+                <div className="w-20 h-20 bg-emerald-900/20 border border-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500">
+                  <Code className="w-8 h-8 text-emerald-400" />
                 </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+                <p className="font-bold text-white text-xl tracking-tight mb-1 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-emerald-300 transition-colors">Dylan Stuwarth</p>
+                <p className="text-emerald-400/50 text-sm font-mono uppercase tracking-widest mb-6">Camacho Bustamante</p>
+                <div className="inline-flex items-center bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-6">
+                  Frontend Engineer
+                </div>
+                <div className="space-y-2 text-left">
+                  <p className="text-sm text-slate-400 font-light border-b border-white/5 pb-2">Frontend Architecture</p>
+                  <p className="text-sm text-slate-400 font-light border-b border-white/5 pb-2">UI/UX Design Systems</p>
+                  <p className="text-sm text-slate-400 font-light">API Integrations</p>
+                </div>
+                <div className="flex justify-center gap-4 mt-6 pt-4 border-t border-white/5">
+                  <a href="https://github.com/DylanStuwarth" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-emerald-400 transition-colors cursor-pointer" title="GitHub">
+                    <Github className="w-5 h-5" />
+                  </a>
+                  <a href="https://linkedin.com/in/dylanstuwarth" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-emerald-400 transition-colors cursor-pointer" title="LinkedIn">
+                    <Linkedin className="w-5 h-5" />
+                  </a>
+                </div>
+              </div>
 
-      {/* Tecnologías */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-5xl mx-auto px-4">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl font-bold text-gray-900 mb-3 flex items-center gap-3 justify-center">
-              <Code className="w-8 h-8 text-secondary" />
-              Stack Tecnológico
-            </h2>
-            <p className="text-gray-500 max-w-xl mx-auto">
-              Elegimos tecnologías modernas, open-source y escalables para construir una solución robusta en 48 horas.
-            </p>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {tecnologias.map((tech, i) => (
-              <motion.div
-                key={tech.nombre}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.05 }}
-                className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-md hover:border-green-200 transition-all group"
-              >
-                <span className="text-2xl mb-3 block">{tech.emoji}</span>
-                <p className="font-bold text-gray-900 text-sm group-hover:text-green-700 transition-colors">{tech.nombre}</p>
-                <p className="text-xs text-gray-500 mt-1">{tech.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+              {/* Tomas - Backend */}
+              <div className="gsap-card bg-[#050B07]/80 backdrop-blur-xl rounded-3xl p-8 border border-white/5 hover:border-blue-500/30 hover:shadow-[0_15px_40px_rgba(59,130,246,0.15)] transition-all duration-500 text-center group">
+                <div className="w-20 h-20 bg-blue-900/20 border border-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500">
+                  <Shield className="w-8 h-8 text-blue-400" />
+                </div>
+                <p className="font-bold text-white text-xl tracking-tight mb-1 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-blue-300 transition-colors">Tomas Zapata</p>
+                <p className="text-blue-400/50 text-sm font-mono uppercase tracking-widest mb-6">Ortiz</p>
+                <div className="inline-flex items-center bg-blue-500/10 text-blue-400 border border-blue-500/20 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-6">
+                  Backend Engineer
+                </div>
+                <div className="space-y-2 text-left">
+                  <p className="text-sm text-slate-400 font-light border-b border-white/5 pb-2">NestJS Framework</p>
+                  <p className="text-sm text-slate-400 font-light border-b border-white/5 pb-2">Database Architecture</p>
+                  <p className="text-sm text-slate-400 font-light">System Scalability</p>
+                </div>
+                <div className="flex justify-center gap-4 mt-6 pt-4 border-t border-white/5">
+                  <a href="https://github.com/TomasZapata" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-400 transition-colors cursor-pointer" title="GitHub">
+                    <Github className="w-5 h-5" />
+                  </a>
+                  <a href="https://linkedin.com/in/tomaszapata" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-400 transition-colors cursor-pointer" title="LinkedIn">
+                    <Linkedin className="w-5 h-5" />
+                  </a>
+                </div>
+              </div>
 
-      {/* Equipo */}
-      <section className="py-20 bg-white">
-        <div className="max-w-5xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-3 flex items-center gap-3 justify-center">
-              <Users className="w-8 h-8 text-primary" />
-              Nuestro Equipo
-            </h2>
-            <p className="text-gray-500 max-w-2xl mx-auto">
-              Somos tres estudiantes de la <strong>Universidad Privada Domingo Savio (UPDS)</strong>,
-              sede Cochabamba. Este hackathon representa una oportunidad real de demostrar nuestras
-              habilidades y aportar soluciones tecnológicas a problemas que afectan nuestra ciudad.
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-3 gap-8">
-            {/* Dylan - Frontend */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0 }}
-              className="bg-gradient-to-b from-green-50 to-white rounded-2xl p-7 border border-green-100 shadow-sm hover:shadow-lg transition-shadow text-center"
-            >
-              <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-4 shadow-md">
-                🎨
+              {/* Jhunior - Datos */}
+              <div className="gsap-card bg-[#050B07]/80 backdrop-blur-xl rounded-3xl p-8 border border-white/5 hover:border-amber-500/30 hover:shadow-[0_15px_40px_rgba(245,158,11,0.15)] transition-all duration-500 text-center group">
+                <div className="w-20 h-20 bg-amber-900/20 border border-amber-500/20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500">
+                  <Target className="w-8 h-8 text-amber-400" />
+                </div>
+                <p className="font-bold text-white text-xl tracking-tight mb-1 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-amber-300 transition-colors">Jhunior Danilo</p>
+                <p className="text-amber-400/50 text-sm font-mono uppercase tracking-widest mb-6">Sonco Canaza</p>
+                <div className="inline-flex items-center bg-amber-500/10 text-amber-400 border border-amber-500/20 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-6">
+                  Data Analyst
+                </div>
+                <div className="space-y-2 text-left">
+                  <p className="text-sm text-slate-400 font-light border-b border-white/5 pb-2">Data Research</p>
+                  <p className="text-sm text-slate-400 font-light border-b border-white/5 pb-2">Project Management</p>
+                  <p className="text-sm text-slate-400 font-light">Technical Pitching</p>
+                </div>
+                <div className="flex justify-center gap-4 mt-6 pt-4 border-t border-white/5">
+                  <a href="https://github.com/JhuniorDanilo" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-amber-400 transition-colors cursor-pointer" title="GitHub">
+                    <Github className="w-5 h-5" />
+                  </a>
+                  <a href="https://linkedin.com/in/jhuniordanilo" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-amber-400 transition-colors cursor-pointer" title="LinkedIn">
+                    <Linkedin className="w-5 h-5" />
+                  </a>
+                </div>
               </div>
-              <p className="font-black text-gray-900 text-lg leading-tight">Dylan Stuwarth</p>
-              <p className="text-gray-600 text-sm font-medium">Camacho Bustamante</p>
-              <div className="mt-3 inline-flex items-center gap-1.5 bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">
-                ⚛️ Frontend Developer
-              </div>
-              <div className="mt-4 space-y-1.5 text-left">
-                <p className="text-xs text-gray-500 flex items-center gap-2">🔷 React + Tailwind CSS</p>
-                <p className="text-xs text-gray-500 flex items-center gap-2">🔷 UI/UX e Interfaces</p>
-                <p className="text-xs text-gray-500 flex items-center gap-2">🔷 Integración de APIs</p>
-              </div>
-            </motion.div>
-
-            {/* Tomas - Backend */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="bg-gradient-to-b from-blue-50 to-white rounded-2xl p-7 border border-blue-100 shadow-sm hover:shadow-lg transition-shadow text-center"
-            >
-              <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-indigo-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-4 shadow-md">
-                ⚙️
-              </div>
-              <p className="font-black text-gray-900 text-lg leading-tight">Tomas Zapata</p>
-              <p className="text-gray-600 text-sm font-medium">Ortiz</p>
-              <div className="mt-3 inline-flex items-center gap-1.5 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-semibold">
-                🏗️ Backend Developer
-              </div>
-              <div className="mt-4 space-y-1.5 text-left">
-                <p className="text-xs text-gray-500 flex items-center gap-2">🔷 NestJS + TypeScript</p>
-                <p className="text-xs text-gray-500 flex items-center gap-2">🔷 APIs e Integraciones</p>
-                <p className="text-xs text-gray-500 flex items-center gap-2">🔷 Arquitectura de Datos</p>
-              </div>
-            </motion.div>
-
-            {/* Jhunior - Datos + Pitch */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="bg-gradient-to-b from-amber-50 to-white rounded-2xl p-7 border border-amber-100 shadow-sm hover:shadow-lg transition-shadow text-center"
-            >
-              <div className="w-20 h-20 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center text-3xl mx-auto mb-4 shadow-md">
-                📊
-              </div>
-              <p className="font-black text-gray-900 text-lg leading-tight">Jhunior Danilo</p>
-              <p className="text-gray-600 text-sm font-medium">Sonco Canaza</p>
-              <div className="mt-3 inline-flex items-center gap-1.5 bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-xs font-semibold">
-                📈 Datos + Pitch
-              </div>
-              <div className="mt-4 space-y-1.5 text-left">
-                <p className="text-xs text-gray-500 flex items-center gap-2">🔷 Investigación de datos</p>
-                <p className="text-xs text-gray-500 flex items-center gap-2">🔷 Presentación y Pitch</p>
-                <p className="text-xs text-gray-500 flex items-center gap-2">🔷 Gestión del proyecto</p>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Universidad badge */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mt-12 bg-gradient-to-r from-green-700 to-emerald-700 rounded-2xl p-8 text-white text-center"
-          >
-            <div className="flex items-center justify-center gap-3 mb-3">
-              <GraduationCap className="w-8 h-8" />
-              <h3 className="text-2xl font-bold">UPDS — Universidad Privada Domingo Savio</h3>
             </div>
-            <p className="text-green-100 max-w-2xl mx-auto">
-              Sede Cochabamba, Bolivia. Ingeniería en Sistemas e Informática.
-              Este proyecto es una demostración de que los estudiantes bolivianos pueden crear
-              soluciones tecnológicas de impacto real para los problemas de su entorno.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3 justify-center">
-              <span className="bg-white/15 border border-white/20 px-4 py-1.5 rounded-full text-sm backdrop-blur-sm">
-                🏆 Tech4Future Hack 2026
-              </span>
-              <span className="bg-white/15 border border-white/20 px-4 py-1.5 rounded-full text-sm backdrop-blur-sm">
-                🤝 Hub Boliviano de IA
-              </span>
-              <span className="bg-white/15 border border-white/20 px-4 py-1.5 rounded-full text-sm backdrop-blur-sm">
-                💙 Microsoft Learn Student Ambassadors
-              </span>
-            </div>
-          </motion.div>
-        </div>
-      </section>
 
-      {/* Misión final */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-3xl mx-auto px-4 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <Globe className="w-12 h-12 text-primary mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              Nuestra Visión
+            {/* Universidad badge */}
+            <div className="gsap-card mt-16 bg-white/5 border border-white/10 rounded-3xl p-10 text-center backdrop-blur-xl hover:bg-white/10 transition-colors duration-500">
+              <div className="flex items-center justify-center gap-3 mb-3">
+                <GraduationCap className="w-8 h-8" />
+                <h3 className="text-2xl font-bold">UPDS — Universidad Privada Domingo Savio</h3>
+              </div>
+              <p className="text-green-100 max-w-2xl mx-auto">
+                Sede Cochabamba, Bolivia. Ingeniería en Sistemas e Informática.
+                Este proyecto es una demostración de que los estudiantes bolivianos pueden crear
+                soluciones tecnológicas de impacto real para los problemas de su entorno.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3 justify-center">
+                <span className="bg-white/15 border border-white/20 px-4 py-1.5 rounded-full text-sm backdrop-blur-sm">
+                  Tech4Future Hack 2026
+                </span>
+                <span className="bg-white/15 border border-white/20 px-4 py-1.5 rounded-full text-sm backdrop-blur-sm">
+                  Hub Boliviano de IA
+                </span>
+                <span className="bg-white/15 border border-white/20 px-4 py-1.5 rounded-full text-sm backdrop-blur-sm">
+                  Microsoft Learn Student Ambassadors
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Misión final */}
+        <section className="gsap-section py-32">
+          <div className="max-w-3xl mx-auto px-4 text-center">
+            <Globe className="w-16 h-16 text-primary mx-auto mb-8 opacity-50" />
+            <h2 className="text-4xl font-extrabold text-white mb-6 tracking-tighter">
+              Declaración de Visión
             </h2>
-            <p className="text-gray-600 text-lg leading-relaxed">
-              BioScan Cochabamba nació en 48 horas, pero representa algo más grande:
-              la voluntad de tres jóvenes de usar la tecnología para proteger la naturaleza de su ciudad.
-              El Cerro San Pedro es de todos — y todos podemos contribuir a conservarlo.
+            <p className="text-slate-400 text-xl leading-relaxed font-light mb-8">
+              BioScan Cochabamba establece un nuevo estándar en el cruce entre ingeniería de software y conservación ambiental.
+              Desplegado en 48 horas, este sistema demuestra la capacidad analítica y técnica para mitigar problemas ecológicos reales.
             </p>
-            <p className="text-green-700 font-semibold mt-4 text-lg">
-              🌿 "La tecnología al servicio de la biodiversidad boliviana"
+            <p className="text-primary font-bold text-xl tracking-tight">
+              Ingeniería al servicio de la biodiversidad local.
             </p>
-          </motion.div>
-        </div>
-      </section>
+          </div>
+        </section>
+      </div>
     </div>
   )
 }

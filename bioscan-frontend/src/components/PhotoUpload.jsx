@@ -1,9 +1,14 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Camera, Upload, Loader2, CheckCircle2, Leaf, BarChart3, MapPin, Shield } from 'lucide-react'
+import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion'
+import { Camera, Upload, Loader2, CheckCircle2, Leaf, BarChart3, MapPin, Shield, Scan } from 'lucide-react'
+import { toast } from 'sonner'
 import { identificarEspecie } from '../services/api'
 import { guardarObservacion, obtenerUbicacion, crearMiniatura, limpiarObservaciones } from '../services/observaciones'
+import { cn } from '../lib/utils'
+import gsap from 'gsap'
+
+const springTransition = { type: "spring", stiffness: 70, damping: 20, mass: 1.2 }
 
 export default function PhotoUpload() {
   const [preview, setPreview] = useState(null)
@@ -16,6 +21,36 @@ export default function PhotoUpload() {
   const [showPermiso, setShowPermiso] = useState(false)
   const [permisoAceptado, setPermisoAceptado] = useState(false)
   const [obteniendoUbi, setObteniendoUbi] = useState(false)
+
+  // Físicas 3D para la caja de arrastre
+  const mouseX = useMotionValue(0)
+  const mouseY = useMotionValue(0)
+  const rotateX = useTransform(mouseY, [-200, 200], [15, -15])
+  const rotateY = useTransform(mouseX, [-200, 200], [-15, 15])
+
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    mouseX.set(e.clientX - rect.left - rect.width / 2)
+    mouseY.set(e.clientY - rect.top - rect.height / 2)
+  }
+
+  const handleMouseLeave = () => {
+    mouseX.set(0)
+    mouseY.set(0)
+  }
+
+  // Laser GSAP Effect
+  useEffect(() => {
+    if (preview && !resultado) {
+      let ctx = gsap.context(() => {
+        gsap.fromTo(".laser-line", 
+          { y: 0 },
+          { y: 310, duration: 1.5, yoyo: true, repeat: -1, ease: "sine.inOut" }
+        )
+      })
+      return () => ctx.revert()
+    }
+  }, [preview, resultado])
 
   const onDrop = useCallback((acceptedFiles) => {
     const file = acceptedFiles[0]
@@ -101,9 +136,13 @@ export default function PhotoUpload() {
       })
       setShowModal(false)
       setGuardadoExito(true)
+      toast.success('Observación guardada', {
+        description: 'Visible en Mapa y Catálogo'
+      })
       setTimeout(() => setGuardadoExito(false), 5000)
     } catch (err) {
       console.error('Error guardando observación:', err)
+      toast.error('Error al guardar', { description: 'Inténtalo de nuevo' })
     } finally {
       setGuardando(false)
     }
@@ -120,58 +159,83 @@ export default function PhotoUpload() {
 
   return (
     <>
-    <section id="upload" className="py-16 bg-gradient-to-b from-white to-green-50/50">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl font-bold text-gray-900 mb-3">
-            📸 Identifica una Especie
+    <section id="upload" className="py-24 bg-[#030704] relative">
+      {/* Glow effect */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={springTransition}
+          className="text-center mb-16"
+        >
+          <h2 className="text-4xl lg:text-5xl font-extrabold text-white mb-4 tracking-tighter">
+            Análisis Taxonómico Visual
           </h2>
-          <p className="text-gray-500">
-            Sube una foto de una planta o animal del Cerro San Pedro y nuestra IA la identificará
+          <p className="text-slate-400 font-medium max-w-2xl mx-auto">
+            Procesamiento de visión computacional en tiempo real para especies del Cerro San Pedro
           </p>
-        </div>
+        </motion.div>
 
         <div className="grid md:grid-cols-2 gap-8">
           {/* Upload zone */}
           <div>
             {!preview ? (
-              <div
+              <motion.div
                 {...getRootProps()}
-                className={`relative border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all h-80 flex flex-col items-center justify-center
-                  ${isDragActive
-                    ? 'border-primary bg-primary/5 scale-[1.02]'
-                    : 'border-gray-300 hover:border-primary/50 hover:bg-green-50/50'
-                  }`}
+                style={{ rotateX, rotateY, transformPerspective: 1000 }}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseLeave}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className={cn(
+                  "relative border border-dashed rounded-3xl p-8 text-center cursor-pointer transition-colors duration-300 h-80 flex flex-col items-center justify-center backdrop-blur-md shadow-2xl",
+                  isDragActive
+                    ? "border-primary bg-primary/10 shadow-[0_0_50px_rgba(22,163,74,0.3)]"
+                    : "border-white/20 bg-white/5 hover:border-primary/50 hover:bg-white/10"
+                )}
               >
                 <input {...getInputProps()} />
-                <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mb-4">
+                <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mb-6 border border-white/10">
                   <Upload className="w-8 h-8 text-primary" />
                 </div>
-                <p className="text-lg font-semibold text-gray-700 mb-2">
+                <p className="text-lg font-semibold text-white mb-2">
                   {isDragActive ? 'Suelta la imagen aquí' : 'Arrastra una foto aquí'}
                 </p>
-                <p className="text-sm text-gray-400 mb-4">
-                  o haz clic para seleccionar
+                <p className="text-sm text-slate-400 mb-6">
+                  o haz clic para explorar tus archivos
                 </p>
-                <div className="flex items-center gap-2 text-xs text-gray-400">
+                <div className="flex items-center gap-2 text-xs text-slate-500 font-mono">
                   <Camera className="w-4 h-4" />
-                  JPG, PNG, WebP — Max 10MB
+                  JPG, PNG, WEBP (MAX 10MB)
                 </div>
-              </div>
+              </motion.div>
             ) : (
               <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="relative rounded-2xl overflow-hidden shadow-lg h-80"
+                initial={{ opacity: 0, scale: 0.95, rotateX: 10 }}
+                animate={{ opacity: 1, scale: 1, rotateX: 0 }}
+                className="relative rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(22,163,74,0.1)] h-80 perspective-1000"
               >
                 <img
                   src={preview}
                   alt="Preview"
                   className="w-full h-full object-cover"
                 />
+                
+                {/* Laser de Escaneo Activo */}
+                {!resultado && (
+                  <>
+                    <div className="absolute inset-0 bg-primary/10 mix-blend-overlay" />
+                    <div className="laser-line absolute top-0 left-0 w-full h-1 bg-primary shadow-[0_0_15px_#16a34a] z-20" />
+                    <div className="absolute inset-0 border-2 border-primary/50 rounded-2xl animate-pulse pointer-events-none z-10" />
+                  </>
+                )}
+
                 <button
                   onClick={handleReset}
-                  className="absolute top-3 right-3 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors text-sm"
+                  className="absolute top-3 right-3 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors text-sm z-30"
                 >
                   ✕
                 </button>
@@ -189,13 +253,13 @@ export default function PhotoUpload() {
               >
                 {loading ? (
                   <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    Identificando con IA...
+                    <Scan className="w-5 h-5 animate-pulse" />
+                    Procesando Análisis Visual...
                   </>
                 ) : (
                   <>
-                    <Leaf className="w-5 h-5" />
-                    Identificar Especie
+                    <Scan className="w-5 h-5" />
+                    Ejecutar Algoritmo de Visión
                   </>
                 )}
               </motion.button>
@@ -210,48 +274,49 @@ export default function PhotoUpload() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                className="bg-white rounded-2xl shadow-lg border border-green-100 p-6"
+                transition={springTransition}
+                className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-8 flex flex-col h-full"
               >
-                <div className="flex items-center gap-2 mb-4">
+                <div className="flex items-center gap-2 mb-6">
                   <CheckCircle2 className="w-6 h-6 text-primary" />
-                  <span className="text-sm font-medium text-primary">Especie Identificada</span>
+                  <span className="text-sm font-medium text-primary uppercase tracking-wider">Análisis Completado</span>
                 </div>
 
-                <h3 className="text-2xl font-bold text-gray-900 mb-1">
+                <h3 className="text-3xl font-bold text-white mb-1 tracking-tight">
                   {resultado.nombre}
                 </h3>
-                <p className="text-sm italic text-gray-500 mb-4">
+                <p className="text-sm italic text-slate-400 mb-6 font-serif">
                   {resultado.nombre_cientifico}
                 </p>
 
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex items-center gap-1.5 bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="flex items-center gap-1.5 bg-primary/20 text-primary px-3 py-1 rounded-full text-sm font-medium border border-primary/20">
                     <BarChart3 className="w-4 h-4" />
                     {resultado.probabilidad}% confianza
                   </div>
-                  <span className={`px-3 py-1 rounded-full text-sm font-medium border ${getEstadoColor(resultado.estado_conservacion)}`}>
+                  <span className={`px-3 py-1 rounded-full text-sm font-medium border ${getEstadoColor(resultado.estado_conservacion)} bg-opacity-10 backdrop-blur-sm`}>
                     {resultado.estado_conservacion}
                   </span>
                 </div>
 
-                <p className="text-gray-600 text-sm leading-relaxed mb-6">
+                <p className="text-slate-300 text-sm leading-relaxed mb-8 flex-grow">
                   {resultado.descripcion}
                 </p>
 
-                <div className="flex gap-3">
+                <div className="flex gap-4 mt-auto">
                   <button
                     onClick={handleReset}
-                    className="flex-1 py-3 border-2 border-gray-200 hover:border-primary text-gray-700 hover:text-primary font-medium rounded-xl transition-all text-sm"
+                    className="flex-1 py-4 border border-white/20 hover:bg-white/5 text-white font-medium rounded-2xl transition-all text-sm backdrop-blur-md"
                   >
-                    Otra foto
+                    Nuevo Análisis
                   </button>
                   <button
                     onClick={handleIniciarGuardado}
                     disabled={guardadoExito}
-                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-primary/10 text-primary font-medium rounded-xl hover:bg-primary/20 transition-all text-sm disabled:opacity-50"
+                    className="flex-1 flex items-center justify-center gap-2 py-4 bg-primary hover:bg-primary-dark text-white font-medium rounded-2xl shadow-lg shadow-primary/20 transition-all text-sm disabled:opacity-50"
                   >
                     <MapPin className="w-4 h-4" />
-                    {guardadoExito ? '✓ Guardado' : 'Guardar Observación'}
+                    {guardadoExito ? 'Registro Guardado' : 'Guardar Observación'}
                   </button>
                 </div>
               </motion.div>
@@ -260,13 +325,13 @@ export default function PhotoUpload() {
                 key="placeholder"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="flex flex-col items-center justify-center h-full bg-gray-50 rounded-2xl border border-dashed border-gray-200 p-8"
+                className="flex flex-col items-center justify-center h-full bg-white/5 backdrop-blur-md rounded-3xl border border-dashed border-white/10 p-8"
               >
-                <Leaf className="w-12 h-12 text-gray-300 mb-4" />
-                <p className="text-gray-400 text-center">
+                <Leaf className="w-12 h-12 text-slate-600 mb-4 opacity-50" />
+                <p className="text-slate-500 text-center font-medium">
                   {preview
-                    ? 'Haz clic en "Identificar Especie" para ver el resultado'
-                    : 'Sube una foto para empezar la identificación'
+                    ? 'Ejecutando modelo de visión computacional...'
+                    : 'Esperando imagen para análisis taxonómico'
                   }
                 </p>
               </motion.div>
@@ -290,32 +355,31 @@ export default function PhotoUpload() {
               initial={{ scale: 0.9, y: 30 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 30 }}
-              className="relative bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center"
+              className="relative bg-[#030704] border border-white/10 rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center backdrop-blur-xl"
             >
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-20 h-20 bg-white/5 border border-white/10 rounded-full flex items-center justify-center mx-auto mb-6">
                 <MapPin className="w-8 h-8 text-primary" />
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">
-                Acceso a la Ubicación
+              <h3 className="text-xl font-bold text-white mb-3">
+                Acceso a Telemetría GPS
               </h3>
-              <p className="text-sm text-gray-500 mb-6">
-                BioScan necesita acceder a tu ubicación para registrar las coordenadas GPS
-                de la observación. Esto permite mapear la biodiversidad del Cerro San Pedro.
+              <p className="text-sm text-slate-400 mb-8 font-light leading-relaxed">
+                El sistema requiere coordenadas geográficas para procesar la observación y mapear la biodiversidad de manera precisa en la red de datos.
               </p>
-              <div className="flex gap-3">
+              <div className="flex gap-4">
                 <button
                   onClick={handleRechazarPermiso}
-                  className="flex-1 py-3 border-2 border-gray-200 text-gray-600 font-medium rounded-xl hover:bg-gray-50 transition-all text-sm"
+                  className="flex-1 py-3 border border-white/20 text-slate-300 font-medium rounded-2xl hover:bg-white/5 hover:text-white transition-all text-sm"
                 >
-                  No permitir
+                  Denegar
                 </button>
                 <button
                   onClick={handleAceptarPermiso}
                   disabled={obteniendoUbi}
-                  className="flex-1 flex items-center justify-center gap-2 py-3 bg-primary hover:bg-primary-dark text-white font-medium rounded-xl transition-all text-sm disabled:opacity-50"
+                  className="flex-1 flex items-center justify-center gap-2 py-3 bg-primary hover:bg-emerald-500 text-white font-bold rounded-2xl transition-all text-sm disabled:opacity-50 hover:shadow-[0_0_20px_rgba(16,185,129,0.3)]"
                 >
                   {obteniendoUbi ? (
-                    <><Loader2 className="w-4 h-4 animate-spin" /> Obteniendo...</>
+                    <><Loader2 className="w-4 h-4 animate-spin" /> Adquiriendo</>
                   ) : (
                     <><MapPin className="w-4 h-4" /> Permitir</>
                   )}
@@ -340,62 +404,61 @@ export default function PhotoUpload() {
               initial={{ scale: 0.95, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 20 }}
-              className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6"
+              className="relative bg-[#030704] border border-white/10 rounded-3xl shadow-2xl max-w-md w-full p-8 backdrop-blur-xl"
             >
-              <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2 mb-4">
-                <MapPin className="w-5 h-5 text-primary" />
-                Guardar Observación
+              <h3 className="text-xl font-bold text-white flex items-center gap-3 mb-6">
+                <MapPin className="w-6 h-6 text-primary" />
+                Registrar Observación
               </h3>
 
-              <div className="bg-green-50 rounded-xl p-4 mb-4">
-                <p className="font-semibold text-gray-900">{resultado.nombre}</p>
-                <p className="text-sm italic text-gray-500">{resultado.nombre_cientifico}</p>
-                <div className="flex items-center gap-2 mt-2">
-                  <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
-                    {resultado.probabilidad}% confianza
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-5 mb-6 backdrop-blur-sm">
+                <p className="font-bold text-white text-lg">{resultado.nombre}</p>
+                <p className="text-sm italic text-slate-400 font-serif mb-4">{resultado.nombre_cientifico}</p>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs bg-primary/20 text-primary border border-primary/20 px-3 py-1 rounded-full font-medium">
+                    {resultado.probabilidad}% Confianza
                   </span>
-                  <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full capitalize">
+                  <span className="text-xs bg-white/10 text-slate-300 border border-white/10 px-3 py-1 rounded-full capitalize font-medium">
                     {resultado.tipo}
                   </span>
                 </div>
               </div>
 
-              <div className="bg-gray-50 rounded-xl p-4 mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-1">📍 Ubicación</p>
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-5 mb-6 backdrop-blur-sm">
+                <p className="text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">Coordenadas de Origen</p>
                 {ubicacion ? (
-                  <p className="text-xs text-gray-500">
-                    Lat: {ubicacion.lat.toFixed(6)}, Lng: {ubicacion.lng.toFixed(6)}
+                  <p className="text-sm text-slate-300 font-mono bg-black/30 p-2 rounded-lg">
+                    LAT: {ubicacion.lat.toFixed(6)} | LNG: {ubicacion.lng.toFixed(6)}
                     {ubicacion.precision && ` (±${Math.round(ubicacion.precision)}m)`}
                   </p>
                 ) : (
-                  <p className="text-xs text-amber-600">
-                    ⚠️ Ubicación no disponible. Se usará Cerro San Pedro como referencia.
+                  <p className="text-xs text-amber-500 font-medium">
+                    Telemetría no disponible. Se asignará punto de referencia predeterminado.
                   </p>
                 )}
               </div>
 
-              <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded-xl mb-6">
-                <Shield className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                <p className="text-xs text-amber-800">
-                  Confirma que la identificación es correcta. Los datos se guardarán como observación
-                  ciudadana y aparecerán en el mapa y catálogo de BioScan.
+              <div className="flex items-start gap-3 p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl mb-8">
+                <Shield className="w-6 h-6 text-amber-500 flex-shrink-0" />
+                <p className="text-xs text-amber-200/80 leading-relaxed font-light">
+                  Confirma que el análisis es preciso. Los metadatos formarán parte del repositorio de conservación a nivel plataforma.
                 </p>
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex gap-4">
                 <button
                   onClick={() => setShowModal(false)}
-                  className="flex-1 py-3 border-2 border-gray-200 text-gray-600 font-medium rounded-xl hover:bg-gray-50 transition-all text-sm"
+                  className="flex-1 py-4 border border-white/20 text-slate-300 font-medium rounded-2xl hover:bg-white/5 hover:text-white transition-all text-sm"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={handleConfirmarGuardado}
                   disabled={guardando}
-                  className="flex-1 flex items-center justify-center gap-2 py-3 bg-primary hover:bg-primary-dark text-white font-medium rounded-xl transition-all text-sm disabled:opacity-50"
+                  className="flex-1 flex items-center justify-center gap-2 py-4 bg-primary hover:bg-emerald-500 text-white font-bold rounded-2xl transition-all text-sm disabled:opacity-50 hover:shadow-[0_0_20px_rgba(16,185,129,0.3)]"
                 >
-                  {guardando ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
-                  {guardando ? 'Guardando...' : 'Confirmar'}
+                  {guardando ? <Loader2 className="w-5 h-5 animate-spin" /> : <CheckCircle2 className="w-5 h-5" />}
+                  {guardando ? 'Procesando' : 'Confirmar'}
                 </button>
               </div>
             </motion.div>
@@ -403,20 +466,6 @@ export default function PhotoUpload() {
         )}
       </AnimatePresence>
 
-      {/* Toast de éxito */}
-      <AnimatePresence>
-        {guardadoExito && (
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 50 }}
-            className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[100] bg-green-600 text-white px-6 py-3 rounded-2xl shadow-lg flex items-center gap-2"
-          >
-            <CheckCircle2 className="w-5 h-5" />
-            <span className="font-medium text-sm">Observación guardada — visible en Mapa y Catálogo</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </>
   )
 }
