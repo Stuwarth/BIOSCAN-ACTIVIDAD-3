@@ -159,6 +159,20 @@ export async function identificarEspecie(imagenBase64) {
 // ===================================================================
 // 2. BUSCAR ESPECIES CERCA DE UNA UBICACIÓN (iNaturalist)
 // ===================================================================
+// Map iNaturalist iconic_taxon_name to our taxonomy types
+const TAXON_MAP = {
+  'Aves': 'ave',
+  'Mammalia': 'mamifero',
+  'Plantae': 'planta',
+  'Reptilia': 'reptil',
+  'Amphibia': 'anfibio',
+  'Insecta': 'insecto',
+  'Arachnida': 'insecto',
+  'Fungi': 'planta',
+  'Mollusca': 'otro',
+  'Actinopterygii': 'otro',
+}
+
 export async function buscarEspeciesCerca(lat = -17.383, lng = -66.152, radio = 15) {
   try {
     if (MODE === 'backend') {
@@ -179,20 +193,25 @@ export async function buscarEspeciesCerca(lat = -17.383, lng = -66.152, radio = 
     }
 
     // --- MODO DIRECTO: iNaturalist API (gratis, sin key) ---
-    const url = `https://api.inaturalist.org/v1/observations?lat=${lat}&lng=${lng}&radius=${radio}&per_page=30&order=desc&order_by=created_at&quality_grade=research`
+    const url = `https://api.inaturalist.org/v1/observations?lat=${lat}&lng=${lng}&radius=${radio}&per_page=30&order=desc&order_by=created_at&quality_grade=research&photos=true`
     const response = await fetch(url)
     const data = await response.json()
 
-    return data.results.map((obs) => ({
-      id: obs.id,
-      nombre: obs.species_guess || 'Desconocida',
-      nombre_cientifico: obs.taxon?.name || '',
-      foto: obs.photos[0]?.url?.replace('square', 'medium') || '',
-      lat: parseFloat(obs.location?.split(',')[0]) || lat,
-      lng: parseFloat(obs.location?.split(',')[1]) || lng,
-      fecha: obs.observed_on || 'Sin fecha',
-      tipo: obs.taxon?.iconic_taxon_name?.toLowerCase() || 'otro',
-    }))
+    return data.results.map((obs) => {
+      const photoUrl = obs.photos[0]?.url || ''
+      return {
+        id: obs.id,
+        nombre: obs.species_guess || obs.taxon?.preferred_common_name || 'Desconocida',
+        nombre_cientifico: obs.taxon?.name || '',
+        foto: photoUrl.replace('square', 'medium'),
+        foto_thumb: photoUrl, // square thumbnail for map markers
+        lat: parseFloat(obs.location?.split(',')[0]) || lat,
+        lng: parseFloat(obs.location?.split(',')[1]) || lng,
+        fecha: obs.observed_on || 'Sin fecha',
+        tipo: TAXON_MAP[obs.taxon?.iconic_taxon_name] || 'otro',
+        fuente: 'iNaturalist',
+      }
+    })
   } catch (error) {
     console.error('Error buscando especies:', error)
     return []

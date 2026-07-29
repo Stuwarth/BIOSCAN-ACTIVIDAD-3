@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import { motion } from 'framer-motion'
-import { MapPin, Loader2 } from 'lucide-react'
+import { MapPin, Loader2, ExternalLink } from 'lucide-react'
 import { buscarEspeciesCerca } from '../services/api'
 import { getObservaciones } from '../services/observaciones'
 import especiesReferencia from '../data/especies.json'
@@ -16,18 +16,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
 })
 
-// Custom marker icons by type
-const createIcon = (color) =>
-  new L.DivIcon({
-    className: '',
-    html: `<div style="background:${color};width:28px;height:28px;border-radius:50%;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center">
-      <div style="width:8px;height:8px;background:white;border-radius:50%"></div>
-    </div>`,
-    iconSize: [28, 28],
-    iconAnchor: [14, 14],
-    popupAnchor: [0, -16],
-  })
-
+// Color mapping by species type
 const tipoColor = {
   ave: '#3b82f6',
   mamifero: '#f59e0b',
@@ -37,6 +26,32 @@ const tipoColor = {
   insecto: '#f97316',
   otro: '#6b7280',
 }
+
+// Create a circular photo marker icon
+const createPhotoIcon = (imageUrl, tipo) => {
+  const borderColor = tipoColor[tipo] || tipoColor.otro
+  return new L.DivIcon({
+    className: 'photo-marker',
+    html: `<div class="photo-marker-inner" style="border-color:${borderColor}">
+      <img src="${imageUrl}" alt="" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'color-marker-dot\\'></div>';this.parentElement.style.background='${borderColor}';this.parentElement.style.display='flex';this.parentElement.style.alignItems='center';this.parentElement.style.justifyContent='center'" />
+    </div>`,
+    iconSize: [44, 44],
+    iconAnchor: [22, 22],
+    popupAnchor: [0, -24],
+  })
+}
+
+// Fallback color marker (when no photo available)
+const createColorIcon = (color) =>
+  new L.DivIcon({
+    className: 'photo-marker',
+    html: `<div class="color-marker-inner" style="background:${color}">
+      <div class="color-marker-dot"></div>
+    </div>`,
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
+    popupAnchor: [0, -18],
+  })
 
 // Cerro San Pedro center
 const CENTER = [-17.383, -66.152]
@@ -55,18 +70,18 @@ function FitBounds({ markers }) {
 export default function MapView({ fullPage = false }) {
   const [especies, setEspecies] = useState(() => {
     const obs = getObservaciones()
-    // Incluir especies de referencia documentadas por UMSS
-    const ref = especiesReferencia.map((e, i) => ({ ...e, id: `ref-${i}`, fuente: e.fuente || 'UMSS-CBG' }))
+    // Include reference species documented by UMSS
+    const ref = especiesReferencia.map((e, i) => ({ ...e, id: e.id || `ref-${i}`, fuente: e.fuente || 'UMSS-CBG' }))
     return [...obs, ...ref]
   })
   const [filtro, setFiltro] = useState('todos')
   const [loading, setLoading] = useState(false)
 
-  // Refrescar observaciones cuando se guarda una nueva
+  // Refresh observations when a new one is saved
   useEffect(() => {
     const refresh = () => {
       const obs = getObservaciones()
-      const ref = especiesReferencia.map((e, i) => ({ ...e, id: `ref-${i}`, fuente: e.fuente || 'UMSS-CBG' }))
+      const ref = especiesReferencia.map((e, i) => ({ ...e, id: e.id || `ref-${i}`, fuente: e.fuente || 'UMSS-CBG' }))
       setEspecies((prev) => {
         const inat = prev.filter((e) => e.fuente === 'inaturalist')
         return [...obs, ...ref, ...inat]
@@ -94,6 +109,7 @@ export default function MapView({ fullPage = false }) {
             latitud: d.lat,
             longitud: d.lng,
             imagen: d.foto,
+            imagen_thumb: d.foto?.replace('medium', 'square'),
             fuente: 'inaturalist',
           })),
         ]
@@ -108,6 +124,17 @@ export default function MapView({ fullPage = false }) {
 
   const filtradas = filtro === 'todos' ? especies : especies.filter((e) => e.tipo === filtro)
   const tipos = ['todos', ...new Set(especies.map((e) => e.tipo).filter(Boolean))]
+
+  // Get the best thumbnail URL for a species
+  const getThumbUrl = (esp) => {
+    // Prefer imagen_thumb (square), fall back to imagen (medium)
+    if (esp.imagen_thumb) return esp.imagen_thumb
+    if (esp.imagen) {
+      // Try to convert medium URL to square
+      return esp.imagen.replace('/medium.', '/square.').replace('/medium/', '/square/')
+    }
+    return null
+  }
 
   return (
     <motion.div
@@ -162,35 +189,62 @@ export default function MapView({ fullPage = false }) {
           />
           <FitBounds markers={filtradas} />
 
-          {filtradas.map((esp) => (
-            <Marker
-              key={esp.id}
-              position={[esp.latitud || esp.lat, esp.longitud || esp.lng]}
-              icon={createIcon(tipoColor[esp.tipo] || tipoColor.otro)}
-            >
-              <Popup>
-                <div className="text-center min-w-[180px]">
-                  {esp.imagen && (
-                    <img
-                      src={esp.imagen}
-                      alt={esp.nombre_comun}
-                      className="w-full h-24 object-cover rounded-lg mb-2"
-                      onError={(e) => { e.target.style.display = 'none' }}
-                    />
-                  )}
-                  <p className="font-bold text-sm">{esp.nombre_comun}</p>
-                  <p className="text-xs italic text-gray-500">{esp.nombre_cientifico}</p>
-                  <span className={`inline-block mt-1 text-xs px-2 py-0.5 rounded-full
-                    ${esp.estado_conservacion === 'en peligro' ? 'bg-red-500/20 text-red-500' :
-                      esp.estado_conservacion === 'vulnerable' ? 'bg-amber-500/20 text-amber-500' :
-                      'bg-primary/20 text-primary'}`}
-                  >
-                    {esp.estado_conservacion}
-                  </span>
-                </div>
-              </Popup>
-            </Marker>
-          ))}
+          {filtradas.map((esp) => {
+            const thumbUrl = getThumbUrl(esp)
+            const icon = thumbUrl
+              ? createPhotoIcon(thumbUrl, esp.tipo)
+              : createColorIcon(tipoColor[esp.tipo] || tipoColor.otro)
+
+            return (
+              <Marker
+                key={esp.id}
+                position={[esp.latitud || esp.lat, esp.longitud || esp.lng]}
+                icon={icon}
+              >
+                <Popup>
+                  <div className="text-center min-w-[200px] max-w-[260px]">
+                    {esp.imagen && (
+                      <img
+                        src={esp.imagen}
+                        alt={esp.nombre_comun}
+                        className="w-full h-28 object-cover rounded-lg mb-2"
+                        onError={(e) => { e.target.style.display = 'none' }}
+                      />
+                    )}
+                    <p className="font-bold text-sm text-gray-900">{esp.nombre_comun}</p>
+                    <p className="text-xs italic text-gray-500">{esp.nombre_cientifico}</p>
+                    {esp.familia && (
+                      <p className="text-[10px] text-gray-400 mt-0.5">Familia: {esp.familia}</p>
+                    )}
+                    <div className="flex items-center justify-center gap-1.5 mt-1.5 flex-wrap">
+                      <span className={`inline-block text-[10px] px-2 py-0.5 rounded-full font-medium
+                        ${esp.estado_conservacion === 'en peligro' ? 'bg-red-500/20 text-red-600' :
+                          esp.estado_conservacion === 'vulnerable' ? 'bg-amber-500/20 text-amber-600' :
+                          'bg-green-500/20 text-green-600'}`}
+                      >
+                        {esp.estado_conservacion}
+                      </span>
+                      {esp.endemic && (
+                        <span className="inline-block text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-600 font-medium">
+                          Endémica
+                        </span>
+                      )}
+                    </div>
+                    {esp.observaciones_verificadas && (
+                      <p className="text-[10px] text-gray-400 mt-1">
+                        {esp.observaciones_verificadas} obs. verificadas
+                      </p>
+                    )}
+                    {esp.fuente && (
+                      <p className="text-[9px] text-gray-300 mt-1 opacity-70">
+                        Fuente: {esp.fuente}
+                      </p>
+                    )}
+                  </div>
+                </Popup>
+              </Marker>
+            )
+          })}
         </MapContainer>
       </div>
 

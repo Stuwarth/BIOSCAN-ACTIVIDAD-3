@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async'
 import { Search, Filter, Leaf } from 'lucide-react'
 import SpeciesCard from '../components/SpeciesCard'
 import { getObservaciones } from '../services/observaciones'
-import especiesReferencia from '../data/especies.json'
+import especiesReferencia from '../data/especies.json' // HMR Force Update
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 

@@ -16,6 +16,7 @@ import Home from './pages/Home'
 import Catalog from './pages/Catalog'
 import MapPage from './pages/MapPage'
 import About from './pages/About'
+import PocBioMapa3D from './pages/PocBioMapa3D'
 
 function MainLayout() {
   const location = useLocation()
@@ -29,6 +30,7 @@ function MainLayout() {
             <Route path="/catalogo" element={<PageTransition><Catalog /></PageTransition>} />
             <Route path="/mapa" element={<PageTransition><MapPage /></PageTransition>} />
             <Route path="/nosotros" element={<PageTransition><About /></PageTransition>} />
+            <Route path="/poc-3d" element={<PageTransition><PocBioMapa3D /></PageTransition>} />
             <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
           </Routes>
         </AnimatePresence>

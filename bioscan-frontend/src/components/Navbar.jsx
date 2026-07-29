@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Leaf, Menu, X, Map, BookOpen, Users } from 'lucide-react'
+import { Leaf, Menu, X, Map, BookOpen, Users, Sparkles } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const links = [
   { to: '/', label: 'Inicio', icon: Leaf },
   { to: '/catalogo', label: 'Catálogo', icon: BookOpen },
   { to: '/mapa', label: 'Mapa', icon: Map },
+  { to: '/poc-3d', label: 'PoC 3D', icon: Sparkles },
   { to: '/nosotros', label: 'Nosotros', icon: Users },
 ]
 
